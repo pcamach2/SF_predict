@@ -14,14 +14,14 @@ from sklearn.model_selection import train_test_split
 import h5py
 import csv
 from scipy.sparse import csr_matrix
+import bct
 
-#struct conn matrices
-matfilespath = '/datain/matfiles_msmt_11182022_/'
+# struct conn matrices
+matfilespath = '/datain/matfiles_gqi_11182022_/'
 inpath_files = os.listdir(matfilespath)
 part_num = len(inpath_files)
 
 # RSFC matrices
-
 fcmatfilespath = '/datain/matfiles_aroma_11182022/'
 inpath_files_fc = os.listdir(fcmatfilespath)
 part_num_fc = len(inpath_files_fc)
@@ -58,7 +58,7 @@ for atlas in atlases:
 
     i = 0
     for matfile in inpath_files:
-        mat=sio.loadmat(matfilespath + matfile)# load mat-file
+        mat = sio.loadmat(matfilespath + matfile)  # load mat-file
         print(matfile)
         if 'msmtconnectome' in matfile:
             mdata_sift_radius2_count = mat[atlas+ '_sift_radius2_count_connectivity']  # variable in mat file
@@ -101,75 +101,88 @@ for atlas in atlases:
     allsub_mat_count_sum = np.add(allsub_mat_count_pass, allsub_mat_count_end)
     allsub_mat_mean_length_sum = np.add(allsub_mat_mean_length_pass, allsub_mat_mean_length_end)
 
-    FC = allsub_mat_fcon # temporary!!!
-    FC[FC<-1]=0
-    FC[FC>1]=0
+    FC = allsub_mat_fcon  # temporary!!!
+    FC[FC < -1] = 0
+    FC[FC > 1] = 0
     
-    FC_triu = np.zeros((part_num,num_rois,num_rois))
+    FC_triu = np.zeros((part_num, num_rois, num_rois))
     ii = 0
     for X in list(FC):
-        #get the upper triangular part of this matrix
-        v = X[np.triu_indices(X.shape[0], k = 0)]
-        X[np.triu_indices(X.shape[0], k = 0)] = v
+        # get the upper triangular part of this matrix
+        v = X[np.triu_indices(X.shape[0], k=0)]
+        X[np.triu_indices(X.shape[0], k=0)] = v
         X = X + X.T - np.diag(np.diag(X))
         FC_triu[ii] = X
         ii = ii + 1
 
     # we need to import the fc matrices in a similar method as above!!! ^
-    for edge_weight in 'sift_radius2_count','sift_invnodevol_radius2_count','radius2_count','radius2_meanlength':
+    for edge_weight in ['count_sum','ncount_sum','mean_length_sum','gfa_sum']:
         SC = eval('allsub_mat_' + edge_weight)
-        SC_triu = np.zeros((part_num,num_rois,num_rois))
-        SC_triu_random = np.zeros((part_num,num_rois,num_rois))
+        SC_triu = np.zeros((part_num, num_rois, num_rois))
+        SC_triu_random = np.zeros((part_num, num_rois, num_rois))
         i = 0
         for X in list(SC):
-            # the folowing is per suggestion from Elef
+            # the following is per suggestion from Elef
             # for each element in X, weight edges by fraction of total connections from that element to other nodes
             for j in np.arange(num_rois):
                 for jj in np.arange(num_rois):
-                    if X[j,jj] > 0:
-                        X[j,jj] = X[j,jj]/np.sum(X[j,:])
+                    if X[j, jj] > 0:
+                        X[j, jj] = X[j, jj] / np.sum(X[j, :])
             # scramble X
             X_random = X
             rng = np.random.default_rng()
             X_random = rng.permuted(X_random, axis=0)
             X_random = rng.permuted(X_random, axis=1)
             # get the upper triangular part of this matrix
-            v = X[np.triu_indices(X.shape[0], k = 0)]
-            X[np.triu_indices(X.shape[0], k = 0)] = v
+            v = X[np.triu_indices(X.shape[0], k=0)]
+            X[np.triu_indices(X.shape[0], k=0)] = v
             X = X + X.T - np.diag(np.diag(X))
-            v_random = X_random[np.triu_indices(X_random.shape[0], k = 0)]
-            X_random[np.triu_indices(X_random.shape[0], k = 0)] = v_random
+            v_random = X_random[np.triu_indices(X_random.shape[0], k=0)]
+            X_random[np.triu_indices(X_random.shape[0], k=0)] = v_random
             X_random = X_random + X_random.T - np.diag(np.diag(X_random))
             # normalize and add diagonal as 1 per Oualid
             # X = X/X.max()
             np.fill_diagonal(X, 1)
-            SC_triu[i] = X 
+            SC_triu[i] = X
             np.fill_diagonal(X_random, 1)
             SC_triu_random[i] = X_random
-            #SC_sparse = csr_matrix(SC_triu[i])
-            #SC_triu[i] = SC_sparse.todense()
+            # SC_sparse = csr_matrix(SC_triu[i])
+            # SC_triu[i] = SC_sparse.todense()
             i = i + 1
+        
+        # Calculate density for each connectivity matrix
+        density = np.zeros(part_num)
+        for i, X in enumerate(list(SC)):
+            density[i] = bct.density_und(X)
+
+        # Extract the portion of the file name before the first underscore
+        file_names = [file.split('_')[0] for file in inpath_files]
 
         for iii in np.arange(100):
             sc_ids = list(range(len(SC)))
-            sc_train_ids, sc_test_ids, fc_train, fc_test = train_test_split(sc_ids, FC_triu, test_size = 0.20, random_state=iii)
+            sc_train_ids, sc_test_ids, fc_train, fc_test, density_train, density_test = train_test_split(sc_ids, FC_triu, density, test_size=0.20, random_state=iii)
             # Write
-            f = h5py.File('/datain/dataset/train_percent_msmt_' + edge_weight + '_diag1_' + str(iii) + '.h5py', 'w')
-            f.create_dataset(f"inputs", data=SC_triu[sc_train_ids])
-            f.create_dataset(f"labels", data=fc_train)
+            f = h5py.File('/datain/dataset/train_percent_gqi_' + edge_weight + '_diag1_' + str(iii) + '.h5py', 'w')
+            f.create_dataset("inputs", data=SC_triu[sc_train_ids])
+            f.create_dataset("labels", data=fc_train)
+            f.create_dataset("density", data=density_train)
+            f.create_dataset("file_name", data=np.array(file_names, dtype=h5py.string_dtype(encoding='utf-8')))
             f.close()
-            f = h5py.File('/datain/dataset/train_scrambled_percent_msmt_' + edge_weight + '_diag1_' + str(iii) + '.h5py', 'w')
-            f.create_dataset(f"inputs", data=SC_triu_random[sc_train_ids])
-            f.create_dataset(f"labels", data=fc_train)
+            f = h5py.File('/datain/dataset/test_percent_gqi_' + edge_weight + '_diag1_' + str(iii) + '.h5py', 'w')
+            f.create_dataset("inputs", data=SC_triu[sc_test_ids])
+            f.create_dataset("labels", data=fc_test)
+            f.create_dataset("density", data=density_test)
+            f.create_dataset("file_name", data=np.array(file_names, dtype=h5py.string_dtype(encoding='utf-8')))
             f.close()
-            f = h5py.File('/datain/dataset/test_percent_msmt_' + edge_weight + '_diag1_' + str(iii) + '.h5py', 'w')
-            f.create_dataset(f"inputs", data=SC_triu[sc_test_ids])
-            f.create_dataset(f"labels", data=fc_test)
+            f = h5py.File('/datain/dataset/train_scrambled_percent_gqi_' + edge_weight + '_diag1_' + str(iii) + '.h5py', 'w')
+            f.create_dataset("inputs", data=SC_triu_random[sc_train_ids])
+            f.create_dataset("labels", data=fc_train)
+            f.create_dataset("density", data=density_train)
+            f.create_dataset("file_name", data=np.array(file_names, dtype=h5py.string_dtype(encoding='utf-8')))
             f.close()
-            f = h5py.File('/datain/dataset/test_scrambled_percent_msmt_' + edge_weight + '_diag1_' + str(iii) + '.h5py', 'w')
-            f.create_dataset(f"inputs", data=SC_triu_random[sc_test_ids])
-            f.create_dataset(f"labels", data=fc_test)
+            f = h5py.File('/datain/dataset/test_scrambled_percent_gqi_' + edge_weight + '_diag1_' + str(iii) + '.h5py', 'w')
+            f.create_dataset("inputs", data=SC_triu_random[sc_test_ids])
+            f.create_dataset("labels", data=fc_test)
+            f.create_dataset("density", data=density_test)
+            f.create_dataset("file_name", data=np.array(file_names, dtype=h5py.string_dtype(encoding='utf-8')))
             f.close()
-
-
-
