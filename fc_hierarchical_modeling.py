@@ -11,7 +11,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
-from factor_analyzer import FactorAnalyzer
+import statsmodels.api as sm
 
 def get_indices_first_ten_factor_analysis(X):
     # Perform Factor Analysis
@@ -111,6 +111,12 @@ atlas = 'aal116'
 # # summarize behavioral data
 # print(behavioral.describe())
 
+# load demographic data
+demographic = pd.read_csv('/home/paul/thesis/dev/SAY_sf_prediction_v2/dataset/demographic.csv')
+# summarize demographic data
+print(demographic.describe())
+
+
 # load data for each dataset (1-100) of each edge weight (gqi_count_sum, msmt_sift_radius2_count, dti_dti_count)
 for i in [25,26]: # np.arange(100):
     for edge_weight in  ['gqi_count_sum']:  # 'gqi_count_sum', 'msmt_sift_radius2_count', 'dti_dti_count':
@@ -201,8 +207,67 @@ for i in [25,26]: # np.arange(100):
         # data = data.dropna()
         # # reset the index
         # data = data.reset_index(drop=True)
-        # perform hierarchical linear regression with the behavioral data as the outcome and the principal components of the
+
+        # perform first level of ordinary least squares linear regression with the behavioral data as the outcome and the demographic data as the predictors
+        # set predictors as the demographic data (Age, Sex)
+        predictors = demographic.drop(['subject_id', 'file_name'], axis=1)
+        # set outcome as the clinical outcome
+        outcome = data['clinical_outcome']
+        # perform ordinary least squares linear regression
+        model = sm.OLS(outcome, predictors)
+        results = model.fit()
+        # print the results
+        print(results.summary())
+        # save results to csv
+        results.summary().tables[1].as_csv('results/OLS_demographic.csv')
+        # create and save a plot of the results
+        plt.figure()
+        plt.plot(results.fittedvalues, outcome, 'o')
+        plt.xlabel('Predicted')
+        plt.ylabel('Observed')
+        plt.savefig('results/OLS_demographic.png')
+        
+        # perform first level of ordinary least squares linear regression with the behavioral data as the outcome and the principal components of the
         #     empirical and predicted FC data as the predictors
+        # set predictors as the first ten principal components of the empirical FC data
+        predictors = data[['FC_principal_components_' + str(iii) for iii in range(10)]]
+        # set outcome as the clinical outcome
+        outcome = data['clinical_outcome']
+        # perform ordinary least squares linear regression
+        model = sm.OLS(outcome, predictors)
+        results = model.fit()
+        # print the results
+        print(results.summary())
+        # save results to csv
+        results.summary().tables[1].as_csv('results/OLS_FC_empirical.csv')
+        # create and save a plot of the results
+        plt.figure()
+        plt.plot(results.fittedvalues, outcome, 'o')
+        plt.xlabel('Predicted')
+        plt.ylabel('Observed')
+        plt.savefig('results/OLS_FC.png')
+
+        # set predictors as the first ten principal components of the predicted FC data
+        predictors = data[['pred_FC_principal_components_' + str(iii) for iii in range(10)]]
+        # set outcome as the clinical outcome
+        outcome = data['clinical_outcome']
+        # perform ordinary least squares linear regression
+        model = sm.OLS(outcome, predictors)
+        results = model.fit()
+        # print the results
+        print(results.summary())
+        # save results to csv
+        results.summary().tables[1].as_csv('results/OLS_FC.csv')
+        # create and save a plot of the results
+        plt.figure()
+        plt.plot(results.fittedvalues, outcome, 'o')
+        plt.xlabel('Predicted')
+        plt.ylabel('Observed')
+        plt.savefig('results/OLS_FC_predicted.png')
+        
+
+        # perform hierarchical linear regression with the behavioral data as the outcome and the demographic data and
+        #     principal components of the empirical and predicted FC data as the predictors
         # Create a design matrix with predictors for the hierarchical model for linear regression
         #     using each of the first ten principal components of the empirical and predicted FC data
         predictors = np.zeros((data.shape[0], 20))
