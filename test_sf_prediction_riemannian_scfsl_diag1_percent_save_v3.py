@@ -21,12 +21,12 @@ import bct
 os.chdir('/datain')
 
 #struct conn matrices
-matfilespath = '/datain/matfiles_dti_11182022/' # '/datain/matfiles_dti_count_11182022_/'
+matfilespath = '/datain/matfiles_dti_mean_path_length_06052023_/'
 inpath_files = os.listdir(matfilespath)
 part_num = len(inpath_files)
 
 # RSFC matrices
-fcmatfilespath = '/datain/matfiles_aroma_11182022/'
+fcmatfilespath = '/datain/matfiles_aroma_06052023/'
 inpath_files_fc = os.listdir(fcmatfilespath)
 part_num_fc = len(inpath_files_fc)
 
@@ -51,7 +51,7 @@ for atlas in atlases:
 
     i = 0
     for matfile in inpath_files:
-        mat = sio.loadmat(matfilespath + matfile)  # load mat-file
+        mat = np.genfromtxt(matfilespath + matfile, delimiter=",", dtype='float',encoding='us-ascii')
         print(matfile)
         if 'dti' in matfile:
             # mdata_dti_volwei = mat  # variable in mat file
@@ -60,7 +60,6 @@ for atlas in atlases:
             elif 'Volume' in matfile:
                 allsub_mat_dti_volumeweighted[i,:,:] = mat
             elif 'mean' in matfile:
-                # mdata_dti_meanlength = mat
                 allsub_mat_dti_meanlength[i,:,:] = mat
             i = i + 1
 
@@ -85,11 +84,13 @@ for atlas in atlases:
         FC_triu[ii] = X
         ii = ii + 1
 
-    # we need to import the fc matrices in a similar method as above!!! ^
-    for edge_weight in 'dti_volumeweighted', 'dti_count', 'dti_meanlength':
+    # for edge_weight in ['dti_volumeweighted', 'dti_count', 'dti_meanlength']:
+    if num_rois == 116:
+        edge_weight = 'dti_meanlength'
         SC = eval('allsub_mat_' + edge_weight)
         SC_triu = np.zeros((part_num, num_rois, num_rois))
         SC_triu_random = np.zeros((part_num, num_rois, num_rois))
+        density = np.zeros(part_num)
         i = 0
         for X in list(SC):
             # the following is per suggestion from Elef
@@ -98,6 +99,7 @@ for atlas in atlases:
                 for jj in np.arange(num_rois):
                     if X[j, jj] > 0:
                         X[j, jj] = X[j, jj] / np.sum(X[j, :])
+            density[i] = bct.density_und(X)[0]
             # scramble X
             X_random = X
             rng = np.random.default_rng()
@@ -120,11 +122,6 @@ for atlas in atlases:
             # SC_triu[i] = SC_sparse.todense()
             i = i + 1
         
-        # Calculate density for each connectivity matrix
-        density = np.zeros(part_num)
-        for i, X in enumerate(list(SC)):
-            density[i] = bct.density_und(X)
-
         # Extract the portion of the file name before the first underscore
         file_names = [file.split('_')[0] for file in inpath_files]
 

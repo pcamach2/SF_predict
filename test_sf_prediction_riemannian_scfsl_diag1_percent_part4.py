@@ -20,13 +20,13 @@ import pickle
 
 os.chdir('/datain')
 #struct conn matrices
-matfilespath = '/datain/matfiles_dti_volwei_11182022_/'  # '/datain/matfiles_dti_count_11182022_/'
+matfilespath = '/datain/matfiles_dti_volwei_06052023_/'  # '/datain/matfiles_dti_count_11182022_/'
 inpath_files = os.listdir(matfilespath)
 part_num = len(inpath_files)
 
 # RSFC matrices
 
-fcmatfilespath = '/datain/matfiles_aroma_11182022/'
+fcmatfilespath = '/datain/matfiles_aroma_06052023/'
 inpath_files_fc = os.listdir(fcmatfilespath)
 part_num_fc = len(inpath_files_fc)
 
@@ -68,9 +68,9 @@ for atlas in atlases:
 
     # we need to import the fc matrices in a similar method as above!!! ^
 #    for edge_weight in 'count_pass','count_end','ncount_pass','ncount_end','mean_length_pass','mean_length_end':
-    # for edge_weight in 'dti_volumeweighted', 'dti_count': # ,"dti_meanlength":
-    if num_rois == 116: # hot fix
-        edge_weight = 'dti_volumeweighted' # "dti_count"
+    for edge_weight in 'dti_meanlength', 'dti_count', 'dti_volumeweighted': # ,"dti_meanlength":
+    # if num_rois == 116: # hot fix
+        # edge_weight = 'dti_volumeweighted' # "dti_count"
         for iii in np.arange(25):
             # Read
             ii = iii + 75

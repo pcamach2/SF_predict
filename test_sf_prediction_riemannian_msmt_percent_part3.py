@@ -19,13 +19,13 @@ from scipy.sparse import csr_matrix
 import pickle
 
 #struct conn matrices
-matfilespath = '/datain/matfiles_msmt_11182022_/'
+matfilespath = '/datain/matfiles_msmt_06052023_/'
 inpath_files = os.listdir(matfilespath)
 part_num = len(inpath_files)
 
 # RSFC matrices
 
-fcmatfilespath = '/datain/matfiles_aroma_11182022/'
+fcmatfilespath = '/datain/matfiles_aroma_06052023/'
 inpath_files_fc = os.listdir(fcmatfilespath)
 part_num_fc = len(inpath_files_fc)
 

@@ -17,12 +17,12 @@ from scipy.sparse import csr_matrix
 import bct
 
 # struct conn matrices
-matfilespath = '/datain/matfiles_gqi_11182022_/'
+matfilespath = '/datain/matfiles_gqi_06052023_/'
 inpath_files = os.listdir(matfilespath)
 part_num = len(inpath_files)
 
 # RSFC matrices
-fcmatfilespath = '/datain/matfiles_aroma_11182022/'
+fcmatfilespath = '/datain/matfiles_aroma_06052023/'
 inpath_files_fc = os.listdir(fcmatfilespath)
 part_num_fc = len(inpath_files_fc)
 
@@ -121,6 +121,7 @@ for atlas in atlases:
         SC_triu = np.zeros((part_num, num_rois, num_rois))
         SC_triu_random = np.zeros((part_num, num_rois, num_rois))
         i = 0
+        density = np.zeros(part_num)
         for X in list(SC):
             # the following is per suggestion from Elef
             # for each element in X, weight edges by fraction of total connections from that element to other nodes
@@ -130,6 +131,7 @@ for atlas in atlases:
                         X[j, jj] = X[j, jj] / np.sum(X[j, :])
             # scramble X
             X_random = X
+            density[i] = bct.density_und(X)[0]
             rng = np.random.default_rng()
             X_random = rng.permuted(X_random, axis=0)
             X_random = rng.permuted(X_random, axis=1)
@@ -150,11 +152,6 @@ for atlas in atlases:
             # SC_triu[i] = SC_sparse.todense()
             i = i + 1
         
-        # Calculate density for each connectivity matrix
-        density = np.zeros(part_num)
-        for i, X in enumerate(list(SC)):
-            density[i] = bct.density_und(X)
-
         # Extract the portion of the file name before the first underscore
         file_names = [file.split('_')[0] for file in inpath_files]
 

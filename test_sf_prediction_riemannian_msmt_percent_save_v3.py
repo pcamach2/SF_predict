@@ -17,12 +17,12 @@ from scipy.sparse import csr_matrix
 import bct
 
 # struct conn matrices
-matfilespath = '/datain/matfiles_msmt_11182022_/'
+matfilespath = '/datain/matfiles_msmt_06052023_/'
 inpath_files = os.listdir(matfilespath)
 part_num = len(inpath_files)
 
 # RSFC matrices
-fcmatfilespath = '/datain/matfiles_aroma_11182022/'
+fcmatfilespath = '/datain/matfiles_aroma_06052023/'
 inpath_files_fc = os.listdir(fcmatfilespath)
 part_num_fc = len(inpath_files_fc)
 
@@ -120,6 +120,7 @@ for atlas in atlases:
         SC = eval('allsub_mat_' + edge_weight)
         SC_triu = np.zeros((part_num, num_rois, num_rois))
         SC_triu_random = np.zeros((part_num, num_rois, num_rois))
+        density = np.zeros(part_num)
         i = 0
         for X in list(SC):
             # the following is per suggestion from Elef
@@ -128,6 +129,7 @@ for atlas in atlases:
                 for jj in np.arange(num_rois):
                     if X[j, jj] > 0:
                         X[j, jj] = X[j, jj] / np.sum(X[j, :])
+            density[i] = bct.density_und(X)[0]
             # scramble X
             X_random = X
             rng = np.random.default_rng()
@@ -150,11 +152,6 @@ for atlas in atlases:
             # SC_triu[i] = SC_sparse.todense()
             i = i + 1
         
-        # Calculate density for each connectivity matrix
-        density = np.zeros(part_num)
-        for i, X in enumerate(list(SC)):
-            density[i] = bct.density_und(X)
-
         # Extract the portion of the file name before the first underscore
         file_names = [file.split('_')[0] for file in inpath_files]
 
