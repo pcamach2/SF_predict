@@ -1,19 +1,8 @@
-from sklearn import svm
-import matplotlib.pyplot as plt
-import pandas as pd
-import os,sys
+import os
 import numpy as np
 import scipy.io as sio
-import pymanopt
-import brainspace
-import sklearn
-# importing the sf_prediction package
-sys.path.insert(0, '/opt/micaopen/sf_prediction')
-from utils import run_sf_prediction
 from sklearn.model_selection import train_test_split
 import h5py
-import csv
-from scipy.sparse import csr_matrix
 import bct
 
 # struct conn matrices
@@ -27,9 +16,8 @@ inpath_files_fc = os.listdir(fcmatfilespath)
 part_num_fc = len(inpath_files_fc)
 
 scripts = '/datain/atlas_ids/'
-# update with new atlases added as needed
-# ^ custom atlases can be used in QSIPrep as part of a custom reconstruction workflow
-atlases = ['aal116'] # ,'schaefer100x17', 'schaefer100x17','schaefer100x7','schaefer200x17','schaefer200x7','schaefer400x17','schaefer400x7','aal116','power264','gordon333','aicha384','brainnetome246'
+atlases = ['aal116']  # ,'schaefer100x17', 'schaefer100x17','schaefer100x7','schaefer200x17','schaefer200x7','schaefer400x17','schaefer400x7'
+                      #  'power264','gordon333','aicha384','brainnetome246'
 
 for atlas in atlases:
     labels = []
@@ -41,70 +29,87 @@ for atlas in atlases:
         num_rois = 116
     print("Concatenating all structural connectomes for %s parcellation" % atlas)
     # GQI
-    allsub_mat_gfa_pass = np.zeros((part_num,num_rois,num_rois))
-    allsub_mat_gfa_end = np.zeros((part_num,num_rois,num_rois))
-    allsub_mat_ncount_pass = np.zeros((part_num,num_rois,num_rois))
-    allsub_mat_ncount_end = np.zeros((part_num,num_rois,num_rois))
-    allsub_mat_count_pass = np.zeros((part_num,num_rois,num_rois))
-    allsub_mat_count_end = np.zeros((part_num,num_rois,num_rois))
-    allsub_mat_mean_length_pass = np.zeros((part_num,num_rois,num_rois))
-    allsub_mat_mean_length_end = np.zeros((part_num,num_rois,num_rois))
+    allsub_mat_gfa_pass = np.zeros((part_num, num_rois, num_rois))
+    allsub_mat_gfa_end = np.zeros((part_num, num_rois, num_rois))
+    allsub_mat_ncount_pass = np.zeros((part_num, num_rois, num_rois))
+    allsub_mat_ncount_end = np.zeros((part_num, num_rois, num_rois))
+    allsub_mat_count_pass = np.zeros((part_num, num_rois, num_rois))
+    allsub_mat_count_end = np.zeros((part_num, num_rois, num_rois))
+    allsub_mat_mean_length_pass = np.zeros((part_num, num_rois, num_rois))
+    allsub_mat_mean_length_end = np.zeros((part_num, num_rois, num_rois))
     # CSD + SIFT2
-    allsub_mat_sift_radius2_count = np.zeros((part_num,num_rois,num_rois))
-    allsub_mat_sift_invnodevol_radius2_count = np.zeros((part_num,num_rois,num_rois))
-    allsub_mat_radius2_count = np.zeros((part_num,num_rois,num_rois))
-    allsub_mat_radius2_meanlength = np.zeros((part_num,num_rois,num_rois))
-    allsub_mat_fcon = np.zeros((part_num,num_rois,num_rois))
+    allsub_mat_sift_radius2_count = np.zeros((part_num, num_rois, num_rois))
+    allsub_mat_sift_invnodevol_radius2_count = np.zeros(
+        (part_num, num_rois, num_rois))
+    allsub_mat_radius2_count = np.zeros((part_num, num_rois, num_rois))
+    allsub_mat_radius2_meanlength = np.zeros((part_num, num_rois, num_rois))
+    allsub_mat_fcon = np.zeros((part_num, num_rois, num_rois))
 
     i = 0
     for matfile in inpath_files:
         mat = sio.loadmat(matfilespath + matfile)  # load mat-file
         print(matfile)
         if 'msmtconnectome' in matfile:
-            mdata_sift_radius2_count = mat[atlas+ '_sift_radius2_count_connectivity']  # variable in mat file
-            mdata_sift_invnodevol_radius2_count = mat[atlas+'_sift_invnodevol_radius2_count_connectivity']  # variable in mat file
-            mdata_radius2_count = mat[atlas+'_radius2_count_connectivity']  # variable in mat file
-            mdata_radius2_meanlength = mat[atlas+'_radius2_meanlength_connectivity']  # variable in mat file
+            # variable in mat file
+            mdata_sift_radius2_count = mat[atlas +
+                                           '_sift_radius2_count_connectivity']
+            # variable in mat file
+            mdata_sift_invnodevol_radius2_count = mat[atlas +
+                                                      '_sift_invnodevol_radius2_count_connectivity']
+            # variable in mat file
+            mdata_radius2_count = mat[atlas+'_radius2_count_connectivity']
+            # variable in mat file
+            mdata_radius2_meanlength = mat[atlas +
+                                           '_radius2_meanlength_connectivity']
             # set 3d matrices
-            allsub_mat_sift_radius2_count[i,:,:] = mdata_sift_radius2_count
-            allsub_mat_sift_invnodevol_radius2_count[i,:,:] = mdata_sift_invnodevol_radius2_count
-            allsub_mat_radius2_count[i,:,:] = mdata_radius2_count
-            allsub_mat_radius2_meanlength[i,:,:] = mdata_radius2_meanlength
+            allsub_mat_sift_radius2_count[i, :, :] = mdata_sift_radius2_count
+            allsub_mat_sift_invnodevol_radius2_count[i,
+                                                     :, :] = mdata_sift_invnodevol_radius2_count
+            allsub_mat_radius2_count[i, :, :] = mdata_radius2_count
+            allsub_mat_radius2_meanlength[i, :, :] = mdata_radius2_meanlength
             i = i + 1
         elif 'gqi' in matfile:
-            mdata_gfa_pass = mat[atlas + '_gfa_pass_connectivity']  # variable in mat file
-            mdata_gfa_end = mat[atlas + '_gfa_end_connectivity'] 
-            mdata_ncount_pass = mat[atlas + '_ncount_pass_connectivity']  # variable in mat file
-            mdata_ncount_end = mat[atlas + '_ncount_end_connectivity'] 
-            mdata_count_pass = mat[atlas + '_ncount_pass_connectivity']  # variable in mat file
+            # variable in mat file
+            mdata_gfa_pass = mat[atlas + '_gfa_pass_connectivity']
+            mdata_gfa_end = mat[atlas + '_gfa_end_connectivity']
+            # variable in mat file
+            mdata_ncount_pass = mat[atlas + '_ncount_pass_connectivity']
+            mdata_ncount_end = mat[atlas + '_ncount_end_connectivity']
+            # variable in mat file
+            mdata_count_pass = mat[atlas + '_ncount_pass_connectivity']
             mdata_count_end = mat[atlas + '_ncount_end_connectivity']
-            mdata_mean_length_pass = mat[atlas + '_mean_length_pass_connectivity']  # variable in mat file
-            mdata_mean_length_end = mat[atlas + '_mean_length_end_connectivity']
-            allsub_mat_gfa_pass[i,:,:] = mdata_gfa_pass
-            allsub_mat_gfa_end[i,:,:] = mdata_gfa_end
-            allsub_mat_ncount_pass[i,:,:] = mdata_ncount_pass
-            allsub_mat_ncount_end[i,:,:] = mdata_ncount_end
-            allsub_mat_count_pass[i,:,:] = mdata_count_pass
-            allsub_mat_count_end[i,:,:] = mdata_count_end
-            allsub_mat_mean_length_pass[i,:,:] = mdata_mean_length_pass
-            allsub_mat_mean_length_end[i,:,:] = mdata_mean_length_end
+            # variable in mat file
+            mdata_mean_length_pass = mat[atlas +
+                                         '_mean_length_pass_connectivity']
+            mdata_mean_length_end = mat[atlas +
+                                        '_mean_length_end_connectivity']
+            allsub_mat_gfa_pass[i, :, :] = mdata_gfa_pass
+            allsub_mat_gfa_end[i, :, :] = mdata_gfa_end
+            allsub_mat_ncount_pass[i, :, :] = mdata_ncount_pass
+            allsub_mat_ncount_end[i, :, :] = mdata_ncount_end
+            allsub_mat_count_pass[i, :, :] = mdata_count_pass
+            allsub_mat_count_end[i, :, :] = mdata_count_end
+            allsub_mat_mean_length_pass[i, :, :] = mdata_mean_length_pass
+            allsub_mat_mean_length_end[i, :, :] = mdata_mean_length_end
             i = i + 1
     ii = 0
     for fcon_file in inpath_files_fc:
         fmat = np.loadtxt(fcmatfilespath + fcon_file, delimiter=",")
         print(fcon_file)
-        allsub_mat_fcon[ii,:,:] = fmat
+        allsub_mat_fcon[ii, :, :] = fmat
         ii = ii + 1
 
     allsub_mat_gfa_sum = np.add(allsub_mat_gfa_pass, allsub_mat_gfa_end)
-    allsub_mat_ncount_sum = np.add(allsub_mat_ncount_pass, allsub_mat_ncount_end)
+    allsub_mat_ncount_sum = np.add(
+        allsub_mat_ncount_pass, allsub_mat_ncount_end)
     allsub_mat_count_sum = np.add(allsub_mat_count_pass, allsub_mat_count_end)
-    allsub_mat_mean_length_sum = np.add(allsub_mat_mean_length_pass, allsub_mat_mean_length_end)
+    allsub_mat_mean_length_sum = np.add(
+        allsub_mat_mean_length_pass, allsub_mat_mean_length_end)
 
     FC = allsub_mat_fcon  # temporary!!!
     FC[FC < -1] = 0
     FC[FC > 1] = 0
-    
+
     FC_triu = np.zeros((part_num, num_rois, num_rois))
     ii = 0
     for X in list(FC):
@@ -151,38 +156,44 @@ for atlas in atlases:
             # SC_sparse = csr_matrix(SC_triu[i])
             # SC_triu[i] = SC_sparse.todense()
             i = i + 1
-        
+
         # Extract the portion of the file name before the first underscore
         file_names = [file.split('_')[0] for file in inpath_files]
 
         for iii in np.arange(100):
             sc_ids = list(range(len(SC)))
-            sc_train_ids, sc_test_ids, fc_train, fc_test, density_train, density_test = train_test_split(sc_ids, FC_triu, density, test_size=0.20, random_state=iii)
+            sc_train_ids, sc_test_ids, fc_train, fc_test, density_train, density_test = train_test_split(
+                sc_ids, FC_triu, density, test_size=0.20, random_state=iii)
             # Write
-            f = h5py.File('/datain/dataset/train_percent_msmt_' + edge_weight + '_diag1_' + str(iii) + '.h5py', 'w')
+            f = h5py.File('/datain/dataset/train_percent_msmt_' +
+                          edge_weight + '_diag1_' + str(iii) + '.h5py', 'w')
             f.create_dataset("inputs", data=SC_triu[sc_train_ids])
             f.create_dataset("labels", data=fc_train)
             f.create_dataset("density", data=density_train)
-            f.create_dataset("file_name", data=np.array(file_names, dtype=h5py.string_dtype(encoding='utf-8')))
+            f.create_dataset("file_name", data=np.array(
+                file_names, dtype=h5py.string_dtype(encoding='utf-8')))
             f.close()
-            f = h5py.File('/datain/dataset/test_percent_msmt_' + edge_weight + '_diag1_' + str(iii) + '.h5py', 'w')
+            f = h5py.File('/datain/dataset/test_percent_msmt_' +
+                          edge_weight + '_diag1_' + str(iii) + '.h5py', 'w')
             f.create_dataset("inputs", data=SC_triu[sc_test_ids])
             f.create_dataset("labels", data=fc_test)
             f.create_dataset("density", data=density_test)
-            f.create_dataset("file_name", data=np.array(file_names, dtype=h5py.string_dtype(encoding='utf-8')))
+            f.create_dataset("file_name", data=np.array(
+                file_names, dtype=h5py.string_dtype(encoding='utf-8')))
             f.close()
-            f = h5py.File('/datain/dataset/train_scrambled_percent_msmt_' + edge_weight + '_diag1_' + str(iii) + '.h5py', 'w')
+            f = h5py.File('/datain/dataset/train_scrambled_percent_msmt_' +
+                          edge_weight + '_diag1_' + str(iii) + '.h5py', 'w')
             f.create_dataset("inputs", data=SC_triu_random[sc_train_ids])
             f.create_dataset("labels", data=fc_train)
             f.create_dataset("density", data=density_train)
-            f.create_dataset("file_name", data=np.array(file_names, dtype=h5py.string_dtype(encoding='utf-8')))
+            f.create_dataset("file_name", data=np.array(
+                file_names, dtype=h5py.string_dtype(encoding='utf-8')))
             f.close()
-            f = h5py.File('/datain/dataset/test_scrambled_percent_msmt_' + edge_weight + '_diag1_' + str(iii) + '.h5py', 'w')
+            f = h5py.File('/datain/dataset/test_scrambled_percent_msmt_' +
+                          edge_weight + '_diag1_' + str(iii) + '.h5py', 'w')
             f.create_dataset("inputs", data=SC_triu_random[sc_test_ids])
             f.create_dataset("labels", data=fc_test)
             f.create_dataset("density", data=density_test)
-            f.create_dataset("file_name", data=np.array(file_names, dtype=h5py.string_dtype(encoding='utf-8')))
+            f.create_dataset("file_name", data=np.array(
+                file_names, dtype=h5py.string_dtype(encoding='utf-8')))
             f.close()
-
-
-

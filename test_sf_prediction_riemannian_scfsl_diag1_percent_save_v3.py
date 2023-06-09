@@ -1,26 +1,12 @@
-from sklearn import svm
-# from nilearn.decoding import Decoder
-import matplotlib.pyplot as plt
-# from nilearn.plotting import show
-import pandas as pd
-import os,sys
+import os
 import numpy as np
-import scipy.io as sio
-import pymanopt
-import brainspace
-import sklearn
-# importing the sf_prediction package
-sys.path.insert(0, '/opt/micaopen/sf_prediction')
-from utils import run_sf_prediction
 from sklearn.model_selection import train_test_split
 import h5py
-import csv
-from scipy.sparse import csr_matrix
 import bct
 
 os.chdir('/datain')
 
-#struct conn matrices
+# struct conn matrices
 matfilespath = '/datain/matfiles_dti_mean_path_length_06052023_/'
 inpath_files = os.listdir(matfilespath)
 part_num = len(inpath_files)
@@ -31,9 +17,9 @@ inpath_files_fc = os.listdir(fcmatfilespath)
 part_num_fc = len(inpath_files_fc)
 
 scripts = '/datain/atlas_ids/'
-# update with new atlases added as needed
-# ^ custom atlases can be used in QSIPrep as part of a custom reconstruction workflow
-atlases = ['aal116'] # ,'schaefer100x17', 'schaefer100x17','schaefer100x7','schaefer200x17','schaefer200x7','schaefer400x17','schaefer400x7','aal116','power264','gordon333','aicha384','brainnetome246'
+# ,'schaefer100x17', 'schaefer100x17','schaefer100x7','schaefer200x17','schaefer200x7','schaefer400x17','schaefer400x7'
+atlases = ['aal116']
+# ,'power264','gordon333','aicha384','brainnetome246'
 
 for atlas in atlases:
     labels = []
@@ -44,36 +30,37 @@ for atlas in atlases:
         # keys = aal116_keys
         num_rois = 116
     print("Concatenating all structural connectomes for %s parcellation" % atlas)
-    allsub_mat_fcon = np.zeros((part_num,num_rois,num_rois))
-    allsub_mat_dti_volumeweighted = np.zeros((part_num,num_rois,num_rois))
-    allsub_mat_dti_meanlength = np.zeros((part_num,num_rois,num_rois))
-    allsub_mat_dti_count = np.zeros((part_num,num_rois,num_rois))
+    allsub_mat_fcon = np.zeros((part_num, num_rois, num_rois))
+    allsub_mat_dti_volumeweighted = np.zeros((part_num, num_rois, num_rois))
+    allsub_mat_dti_meanlength = np.zeros((part_num, num_rois, num_rois))
+    allsub_mat_dti_count = np.zeros((part_num, num_rois, num_rois))
 
     i = 0
     for matfile in inpath_files:
-        mat = np.genfromtxt(matfilespath + matfile, delimiter=",", dtype='float',encoding='us-ascii')
+        mat = np.genfromtxt(matfilespath + matfile,
+                            delimiter=",", dtype='float', encoding='us-ascii')
         print(matfile)
         if 'dti' in matfile:
             # mdata_dti_volwei = mat  # variable in mat file
             if 'Count' in matfile:
-                allsub_mat_dti_count[i,:,:] = mat
+                allsub_mat_dti_count[i, :, :] = mat
             elif 'Volume' in matfile:
-                allsub_mat_dti_volumeweighted[i,:,:] = mat
+                allsub_mat_dti_volumeweighted[i, :, :] = mat
             elif 'mean' in matfile:
-                allsub_mat_dti_meanlength[i,:,:] = mat
+                allsub_mat_dti_meanlength[i, :, :] = mat
             i = i + 1
 
     ii = 0
     for fcon_file in inpath_files_fc:
         fmat = np.loadtxt(fcmatfilespath + fcon_file, delimiter=",")
         print(fcon_file)
-        allsub_mat_fcon[ii,:,:] = fmat
+        allsub_mat_fcon[ii, :, :] = fmat
         ii = ii + 1
 
     FC = allsub_mat_fcon  # temporary!!!
     FC[FC < -1] = 0
     FC[FC > 1] = 0
-    
+
     FC_triu = np.zeros((part_num, num_rois, num_rois))
     ii = 0
     for X in list(FC):
@@ -121,35 +108,44 @@ for atlas in atlases:
             # SC_sparse = csr_matrix(SC_triu[i])
             # SC_triu[i] = SC_sparse.todense()
             i = i + 1
-        
+
         # Extract the portion of the file name before the first underscore
         file_names = [file.split('_')[0] for file in inpath_files]
 
         for iii in np.arange(100):
             sc_ids = list(range(len(SC)))
-            sc_train_ids, sc_test_ids, fc_train, fc_test, density_train, density_test = train_test_split(sc_ids, FC_triu, density, test_size=0.20, random_state=iii)
+            sc_train_ids, sc_test_ids, fc_train, fc_test, density_train, density_test = train_test_split(
+                sc_ids, FC_triu, density, test_size=0.20, random_state=iii)
             # Write
-            f = h5py.File('/datain/dataset/train_percent_dti_' + edge_weight + '_diag1_' + str(iii) + '.h5py', 'w')
+            f = h5py.File('/datain/dataset/train_percent_dti_' +
+                          edge_weight + '_diag1_' + str(iii) + '.h5py', 'w')
             f.create_dataset("inputs", data=SC_triu[sc_train_ids])
             f.create_dataset("labels", data=fc_train)
             f.create_dataset("density", data=density_train)
-            f.create_dataset("file_name", data=np.array(file_names, dtype=h5py.string_dtype(encoding='utf-8')))
+            f.create_dataset("file_name", data=np.array(
+                file_names, dtype=h5py.string_dtype(encoding='utf-8')))
             f.close()
-            f = h5py.File('/datain/dataset/test_percent_dti_' + edge_weight + '_diag1_' + str(iii) + '.h5py', 'w')
+            f = h5py.File('/datain/dataset/test_percent_dti_' +
+                          edge_weight + '_diag1_' + str(iii) + '.h5py', 'w')
             f.create_dataset("inputs", data=SC_triu[sc_test_ids])
             f.create_dataset("labels", data=fc_test)
             f.create_dataset("density", data=density_test)
-            f.create_dataset("file_name", data=np.array(file_names, dtype=h5py.string_dtype(encoding='utf-8')))
+            f.create_dataset("file_name", data=np.array(
+                file_names, dtype=h5py.string_dtype(encoding='utf-8')))
             f.close()
-            f = h5py.File('/datain/dataset/train_scrambled_percent_dti_' + edge_weight + '_diag1_' + str(iii) + '.h5py', 'w')
+            f = h5py.File('/datain/dataset/train_scrambled_percent_dti_' +
+                          edge_weight + '_diag1_' + str(iii) + '.h5py', 'w')
             f.create_dataset("inputs", data=SC_triu_random[sc_train_ids])
             f.create_dataset("labels", data=fc_train)
             f.create_dataset("density", data=density_train)
-            f.create_dataset("file_name", data=np.array(file_names, dtype=h5py.string_dtype(encoding='utf-8')))
+            f.create_dataset("file_name", data=np.array(
+                file_names, dtype=h5py.string_dtype(encoding='utf-8')))
             f.close()
-            f = h5py.File('/datain/dataset/test_scrambled_percent_dti_' + edge_weight + '_diag1_' + str(iii) + '.h5py', 'w')
+            f = h5py.File('/datain/dataset/test_scrambled_percent_dti_' +
+                          edge_weight + '_diag1_' + str(iii) + '.h5py', 'w')
             f.create_dataset("inputs", data=SC_triu_random[sc_test_ids])
             f.create_dataset("labels", data=fc_test)
             f.create_dataset("density", data=density_test)
-            f.create_dataset("file_name", data=np.array(file_names, dtype=h5py.string_dtype(encoding='utf-8')))
+            f.create_dataset("file_name", data=np.array(
+                file_names, dtype=h5py.string_dtype(encoding='utf-8')))
             f.close()
