@@ -1,7 +1,5 @@
 from sklearn import svm
-# from nilearn.decoding import Decoder
 import matplotlib.pyplot as plt
-# from nilearn.plotting import show
 import pandas as pd
 import os,sys
 import numpy as np
@@ -28,33 +26,10 @@ fcmatfilespath = '/datain/matfiles_aroma_11182022/'
 inpath_files_fc = os.listdir(fcmatfilespath)
 part_num_fc = len(inpath_files_fc)
 
-# behavioral = pd.read_csv('/datain/group_data.csv')
-# # y = behavioral['fft_stair_ds_tester1'].to_numpy()
-# # y = behavioral['fft_4step_t1'].to_numpy()
-# y = behavioral['peakvo2_ml_gxt'].to_numpy()
-
 scripts = '/datain/atlas_ids/'
 # update with new atlases added as needed
 # ^ custom atlases can be used in QSIPrep as part of a custom reconstruction workflow
 atlases = ['aal116'] # ,'schaefer100x17', 'schaefer100x17','schaefer100x7','schaefer200x17','schaefer200x7','schaefer400x17','schaefer400x7','aal116','power264','gordon333','aicha384','brainnetome246'
-# mean_strength_mat = np.zeros((part_num,len(atlases)))
-# global_efficiency_mat = np.zeros((part_num,len(atlases)))
-# # atlas_scores = {}
-# atlas_chance_scores = {}
-# 
-# print('all atlases included for analyses, please correct for multiple comparisons accordingly')
-# print('populating atlas region names dataframes')
-# aal116_keys = pd.read_csv(scripts+'aal116_origLUT.txt', delimiter='\t', header = None, names = ['roi_num', 'roi_id'])
-# # power264_keys = pd.read_csv(scripts+'power264_origLUT.txt', delimiter='\t', header = None, names = ['roi_num', 'roi_id'])
-# # gordon333_keys = pd.read_csv(scripts+'gordon333_origLUT.txt', delimiter='\t', header = None, names = ['roi_num', 'roi_id'])
-# # aicha384_keys = pd.read_csv(scripts+'aicha384_origLUT.txt', delimiter='\t', header = None, names = ['roi_num', 'roi_id'])
-# # brainnetome246_keys = pd.read_csv(scripts+'brainnetome246_origLUT.txt', delimiter='\t', header = None, names = ['roi_num', 'roi_id'])
-# # schaefer100x17_keys = pd.read_csv(scripts+'schaefer100x17_origLUT.txt', delimiter='\t', header = None, names = ['roi_num', 'roi_id'])
-# # schaefer100x7_keys = pd.read_csv(scripts+'schaefer100x7_origLUT.txt', delimiter='\t', header = None, names = ['roi_num', 'roi_id'])
-# # schaefer200x17_keys = pd.read_csv(scripts+'schaefer200x17_origLUT.txt', delimiter='\t', header = None, names = ['roi_num', 'roi_id'])
-# # schaefer200x7_keys = pd.read_csv(scripts+'schaefer200x7_origLUT.txt', delimiter='\t', header = None, names = ['roi_num', 'roi_id'])
-# # schaefer400x17_keys = pd.read_csv(scripts+'schaefer400x17_origLUT.txt', delimiter='\t', header = None, names = ['roi_num', 'roi_id'])
-# # schaefer400x7_keys = pd.read_csv(scripts+'schaefer400x7_origLUT.txt', delimiter='\t', header = None, names = ['roi_num', 'roi_id'])
 
 for atlas in atlases:
     labels = []
@@ -64,50 +39,8 @@ for atlas in atlases:
         # labels = aal116_keys['roi_id']
         # keys = aal116_keys
         num_rois = 116
-    # elif atlas == 'power264':
-    #     labels = power264_keys['roi_id']
-    #     keys = power264_keys
-    #     num_rois = 264
-    # elif atlas == 'gordon333':
-    #     labels = gordon333_keys['roi_id']
-    #     keys = gordon333_keys
-    #     num_rois = 333
-    # elif atlas == 'aicha384':
-    #     labels = aicha384_keys['roi_id']
-    #     keys = aicha384_keys
-    #     num_rois = 384
-    # elif atlas == 'brainnetome246':
-    #     labels = brainnetome246_keys['roi_id']
-    #     keys = brainnetome246_keys
-    #     num_rois = 246
-    # elif atlas == 'schaefer100x17':
-    #     labels = schaefer100x17_keys['roi_id']
-    #     keys = schaefer100x17_keys
-    #     num_rois = 100
-    # elif atlas == 'schaefer100x7':
-    #     labels = schaefer100x7_keys['roi_id']
-    #     keys = schaefer100x7_keys
-    #     num_rois = 100
-    # elif atlas == 'schaefer200x17':
-    #     labels = schaefer200x17_keys['roi_id']
-    #     keys = schaefer200x17_keys
-    #     num_rois = 200
-    # elif atlas == 'schaefer200x7':
-    #     labels = schaefer200x7_keys['roi_id']
-    #     keys = schaefer200x7_keys
-    #     num_rois = 200
-    # elif atlas == 'schaefer400x17':
-    #     labels = schaefer400x17_keys['roi_id']
-    #     keys = schaefer400x17_keys
-    #     num_rois = 400
-    # elif atlas == 'schaefer400x7':
-    #     labels = schaefer400x7_keys['roi_id']
-    #     keys = schaefer400x7_keys
-    #     num_rois = 400
     print("Concatenating all structural connectomes for %s parcellation" % atlas)
     # GQI
-    # nodal
-    # connectome
     allsub_mat_gfa_pass = np.zeros((part_num,num_rois,num_rois))
     allsub_mat_gfa_end = np.zeros((part_num,num_rois,num_rois))
     allsub_mat_ncount_pass = np.zeros((part_num,num_rois,num_rois))
@@ -117,7 +50,6 @@ for atlas in atlases:
     allsub_mat_mean_length_pass = np.zeros((part_num,num_rois,num_rois))
     allsub_mat_mean_length_end = np.zeros((part_num,num_rois,num_rois))
     # CSD + SIFT2
-    # connectome
     allsub_mat_sift_radius2_count = np.zeros((part_num,num_rois,num_rois))
     allsub_mat_sift_invnodevol_radius2_count = np.zeros((part_num,num_rois,num_rois))
     allsub_mat_radius2_count = np.zeros((part_num,num_rois,num_rois))
@@ -168,7 +100,7 @@ for atlas in atlases:
     allsub_mat_ncount_sum = np.add(allsub_mat_ncount_pass, allsub_mat_ncount_end)
     allsub_mat_count_sum = np.add(allsub_mat_count_pass, allsub_mat_count_end)
     allsub_mat_mean_length_sum = np.add(allsub_mat_mean_length_pass, allsub_mat_mean_length_end)
-    
+
     FC = allsub_mat_fcon # temporary!!!
     FC[FC<-1]=0
     FC[FC>1]=0

@@ -131,7 +131,7 @@ for atlas in atlases:
     i = 0
     for matfile in inpath_files:
         #mat=sio.loadmat(matfilespath + matfile)# load mat-file
-        mat = np.genfromtxt(matfilespath + matfile, delimiter=",") # needs to read in csv
+        mat = np.genfromtxt(matfilespath + matfile, delimiter=",",encoding='us-ascii') # needs to read in csv
         print(matfile)
         if 'msmtconnectome' in matfile:
             mdata_sift_radius2_count = mat[atlas+ '_sift_radius2_count_connectivity']  # variable in mat file
