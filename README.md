@@ -109,7 +109,7 @@ jupyter-notebook plotting_and_stats.ipynb
 * [ ] Dependencies list in README.md 
 * [ ] requirements.txt for python environment
 * [ ] Usage examples
-* [ ] Slurm scripts
+* [x] Slurm scripts
 * [x] Slurm examples
 * [ ] Create and streamline Jupyter notebook for plotting and stats
 * [ ] Parallel versions and usage for scrambled matrices
