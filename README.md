@@ -105,7 +105,8 @@ jupyter-notebook plotting_and_stats.ipynb
 
 ## TO-DO
 
-* [ ] Create singularity definition file and build instructions
+* [X] Create singularity definition file and build instructions
+* [ ] Singularity examples
 * [ ] Dependencies list in README.md 
 * [ ] requirements.txt for python environment
 * [ ] Usage examples
