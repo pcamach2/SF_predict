@@ -37,9 +37,9 @@ python3 test_sf_prediction_riemannian_scfsl_percent_save_v3.py
 ```
 Using slurm:
 ```bash
-sbatch -a 01 ./dyno_sf_predict_ /path/to/ yes
-sbatch -a 01 ./dyno_sf_predict_ /path/to/ yes
-sbatch -a 01 ./dyno_sf_predict_ /path/to/ yes
+sbatch -a 01 sf_predict_gqi.sh /path/to/base/directory/ beta yes project_directory_name
+sbatch -a 01 sf_predict_msmt.sh /path/to/base/directory/ beta yes project_directory_name
+sbatch -a 01 sf_predict_scfsl.sh /path/to/base/directory/ beta yes project_directory_name
 ```
 
 Run python scripts for reading in train and test data, performing sf_prediction, saving results
@@ -65,9 +65,9 @@ python3 test_sf_prediction_riemannian_scfsl_percent_part4.py
 
 Using slurm:
 ```bash
-sbatch -a 01 ./dyno_sf_predict_ /path/to/ no
-sbatch -a 01 ./dyno_sf_predict_ /path/to/ no
-sbatch -a 01 ./dyno_sf_predict_ /path/to/ no
+sbatch --a 01,02,03,04 sf_predict_gqi.sh /path/to/base/directory/ beta yes project_directory_name
+sbatch --a 01,02,03,04 sf_predict_msmt.sh /path/to/base/directory/ beta yes project_directory_name
+sbatch --a 01,02,03,04 sf_predict_scfsl.sh /path/to/base/directory/ beta yes project_directory_name
 ```
 
 When all predictions finish, run reformat script (`reformat_sf_predict_scores_v3.sh`) in the parent directory of `dataset`
@@ -110,7 +110,7 @@ jupyter-notebook plotting_and_stats.ipynb
 * [ ] requirements.txt for python environment
 * [ ] Usage examples
 * [ ] Slurm scripts
-* [ ] Slurm examples
+* [x] Slurm examples
 * [ ] Create and streamline Jupyter notebook for plotting and stats
 * [ ] Parallel versions and usage for scrambled matrices
 * [ ] Rename files (remove diag1)
