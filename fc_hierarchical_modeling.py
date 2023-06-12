@@ -13,39 +13,13 @@ from sklearn.preprocessing import StandardScaler
 import statsmodels.api as sm
 
 
-def get_indices_first_ten_factor_analysis(X):
-    # Perform Factor Analysis
-    fa = FactorAnalyzer(n_factors=10)
-    fa.fit(X)
 
-    # Get the indices of the first ten factors
-    indices = np.argwhere(np.sum(fa.loadings_[:, :10], axis=1) != 0).flatten()
-
-    # Create a DataFrame with factor loadings
-    factors_df = pd.DataFrame(fa.loadings_[:, :fa.n_factors_], columns=[
-                              'Factor {}'.format(i+1) for i in range(fa.n_factors_)])
-
-    # Save DataFrame to a CSV file
-    factors_df.to_csv('factor_analysis_loadings.csv', index=False)
-
-    # Plot factor loadings
-    plt.figure(figsize=(10, 6))
-    sns.barplot(data=factors_df)
-    plt.title('Factor Loadings')
-    plt.xlabel('Features')
-    plt.ylabel('Loadings')
-    plt.xticks(rotation=90)
-    plt.show()
-
-    return indices
-
-
-def get_indices_first_n_pca(X, n_components=10):
+def get_indices_first_n_pca(X, n_components=50):
     # Perform PCA
     pca = PCA(n_components=n_components)
     X_pca = pca.fit_transform(X)
 
-    # Get the indices of the first ten components
+    # Get the indices of the first fifty components
     indices = np.argwhere(
         np.sum(pca.components_[:n_components], axis=0) != 0).flatten()
 
@@ -87,7 +61,7 @@ def split_data(df, test_size=0.2, random_state=42):
     return train, test
 
 
-def get_principal_components(original_matrix, new_matrix, num_components):
+def get_principal_components(original_matrix, new_matrix, num_components=50):
     # Scale and preprocess the data
     scaler = StandardScaler()
     original_matrix_scaled = scaler.fit_transform(original_matrix)
@@ -153,10 +127,10 @@ for i in [25, 26]:  # np.arange(100):
         # get flattened upper triangle of fc_test matrices for each subject
         for ii in range(len(fc_test)):
             FC_test[ii] = fc_test[ii][np.triu_indices(116, k=1)]
-        # Perform PCA and get the first ten components of the empirical functional connectivity data
+        # Perform PCA and get the first fifty components of the empirical functional connectivity data
         #     and predicted functional connectivity data for each subject
         FC_test_principal_components, pred_test_FC_principal_components = get_principal_components(
-            FC_test, pred_FC, 10)
+            FC_test, pred_FC, 50)
 
         # perform the above for the training data too!
         # load empirical functional connectivity data from h5py
@@ -176,10 +150,10 @@ for i in [25, 26]:  # np.arange(100):
             FC_train[ii] = fc_train[ii][np.triu_indices(116, k=1)]
         # get teh predicted FC for the training data
         pred_FC_train = preds[4]['train']
-        # Perform PCA and get the first ten components of the empirical functional connectivity data
+        # Perform PCA and get the first fifty components of the empirical functional connectivity data
         #     and predicted functional connectivity data for each subject
         FC_train_principal_components, pred_train_FC_principal_components = get_principal_components(
-            FC_train, pred_FC_train, 10)
+            FC_train, pred_FC_train, 50)
         # create a dataframe to combine the principal components of the empirical FC and predicted FC data with
         #      the matched behavioral data based on the file_name value from the respective h5py files for training and testing
         #      and the subject_id value from the behavioral data
@@ -200,20 +174,20 @@ for i in [25, 26]:  # np.arange(100):
 
         # get the subject_id values from the behavioral data
         subject_ids = behavioral['subject_id']
-        # create a dataframe for the test data with the first ten principal components of the empirical FC, such that each weight in the principal components is a separate column
+        # create a dataframe for the test data with the first fifty principal components of the empirical FC, such that each weight in the principal components is a separate column
         test_data = pd.DataFrame(FC_test_principal_components, columns=[
-                                 'FC_principal_components_' + str(iii) for iii in range(10)])
-        # create a dataframe for the test data with the first ten principal components of the predicted FC, such that each weight in the principal components is a separate column
+                                 'FC_principal_components_' + str(iii) for iii in range(50)])
+        # create a dataframe for the test data with the first fifty principal components of the predicted FC, such that each weight in the principal components is a separate column
         test_data = pd.concat([test_data, pd.DataFrame(pred_test_FC_principal_components, columns=[
-                              'pred_FC_principal_components_' + str(iii) for iii in range(10)])], axis=1)
+                              'pred_FC_principal_components_' + str(iii) for iii in range(50)])], axis=1)
         # add the file_name values from the h5py files to the test data
         test_data['file_name'] = file_names_test
-        # create a dataframe for the training data with the first ten principal components of the empirical FC, such that each weight in the principal components is a separate column
+        # create a dataframe for the training data with the first fifty principal components of the empirical FC, such that each weight in the principal components is a separate column
         train_data = pd.DataFrame(FC_train_principal_components, columns=[
-                                  'FC_principal_components_' + str(iii) for iii in range(10)])
-        # create a dataframe for the training data with the first ten principal components of the predicted FC, such that each weight in the principal components is a separate column
+                                  'FC_principal_components_' + str(iii) for iii in range(50)])
+        # create a dataframe for the training data with the first fifty principal components of the predicted FC, such that each weight in the principal components is a separate column
         train_data = pd.concat([train_data, pd.DataFrame(pred_train_FC_principal_components, columns=[
-                               'pred_FC_principal_components_' + str(iii) for iii in range(10)])], axis=1)
+                               'pred_FC_principal_components_' + str(iii) for iii in range(50)])], axis=1)
         # add the file_name values from the h5py files to the training data
         train_data['file_name'] = file_names_train
         # merge the training and testing dataframes
@@ -254,11 +228,11 @@ for i in [25, 26]:  # np.arange(100):
         plt.ylabel('Observed')
         plt.savefig('results/OLS_demographic.png')
 
-        # perform first level of ordinary least squares linear regression with the behavioral data as the outcome and the principal components of the
-        #     empirical and predicted FC data as the predictors
-        # set predictors as the first ten principal components of the empirical FC data
+        # perform first level of ordinary least squares linear regression with the behavioral data as the outcome 
+        #     and the principal components of the empirical and predicted FC data as the predictors
+        # set predictors as the first fifty principal components of the empirical FC data
         predictors = data[['FC_principal_components_' +
-                           str(iii) for iii in range(10)]]
+                           str(iii) for iii in range(50)]]
         # set outcome as the clinical outcome
         outcome = data['clinical_outcome']
         # perform ordinary least squares linear regression
@@ -275,9 +249,9 @@ for i in [25, 26]:  # np.arange(100):
         plt.ylabel('Observed')
         plt.savefig('results/OLS_FC.png')
 
-        # set predictors as the first ten principal components of the predicted FC data
+        # set predictors as the first fifty principal components of the predicted FC data
         predictors = data[['pred_FC_principal_components_' +
-                           str(iii) for iii in range(10)]]
+                           str(iii) for iii in range(50)]]
         # set outcome as the clinical outcome
         outcome = data['clinical_outcome']
         # perform ordinary least squares linear regression
@@ -297,12 +271,12 @@ for i in [25, 26]:  # np.arange(100):
         # perform hierarchical linear regression with the behavioral data as the outcome and the demographic data and
         #     principal components of the empirical and predicted FC data as the predictors
         # Create a design matrix with predictors for the hierarchical model for linear regression
-        #     using each of the first ten principal components of the empirical and predicted FC data
+        #     using each of the first fifty principal components of the empirical and predicted FC data
         predictors = np.zeros((data.shape[0], 20))
-        predictors[:, :10] = data[[
-            'FC_principal_components_' + str(iii) for iii in range(10)]]
-        predictors[:, 10:] = data[[
-            'pred_FC_principal_components_' + str(iii) for iii in range(10)]]
+        predictors[:, :50] = data[[
+            'FC_principal_components_' + str(iii) for iii in range(50)]]
+        predictors[:, 50:] = data[[
+            'pred_FC_principal_components_' + str(iii) for iii in range(50)]]
         # Define the hierarchical model for linear regression
         with pm.Model() as hierarchical_model:
             # Priors for the model parameters
