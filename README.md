@@ -101,18 +101,27 @@ jupyter-notebook plotting_and_stats.ipynb
 
 ### Requirements
 
+This project utilizes a model from the following paper, which should be cited:
 
+Benkarim O, Paquola C, Park B, Royer J, Rodríguez-Cruces R, Vos de Wael R, Misic B, Piella G, Bernhardt B. (2022) A Riemannian approach to predicting brain function from the structural connectome. NeuroImage 257, 119299. https://doi.org/10.1016/j.neuroimage.2022.119299.
+
+Other requirements:
+* [Python Packages](requirements.txt)
+* [Jupyter Notebook](https://jupyter.org/install) for plotting and statistical tests
+* Bash terminal for shell scripts
+
+A [Dockerfile](docker/Dockerfile) is included for building Docker (and subsequent Singularity) images if a containerized implementation is required.
 
 ## TO-DO
 
-* [X] Create singularity definition file and build instructions
+* [X] Create Dockerfile and build instructions for Docker and Singularity
 * [ ] Singularity examples
-* [ ] Dependencies list in README.md 
-* [ ] requirements.txt for python environment
+* [X] Dependencies list in README.md 
+* [X] requirements.txt for python environment
 * [ ] Usage examples
 * [x] Slurm scripts
 * [x] Slurm examples
 * [ ] Create and streamline Jupyter notebook for plotting and stats
 * [ ] Parallel versions and usage for scrambled matrices
 * [ ] Rename files (remove diag1)
-* [ ] Remove unused python scripts
+* [x] Remove unused python scripts
