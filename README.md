@@ -1,5 +1,5 @@
 ## README
-Python code and associated scripts from resting-state functional connectivity 
+Python code and associated scripts for resting-state functional connectivity 
 prediction from structural connectivity using https://github.com/MICA-MNI/micaopen/tree/master/sf_prediction,
 comparing how different structural connectivity matrix edge weightings influence this prediction, and performing
 hierachical regression to empirical and predicted resting-state functional connectivity as predictors of clinical outcomes
@@ -35,6 +35,17 @@ python3 test_sf_prediction_riemannian_msmt_percent_save_v3.py
 echo "Saving DTI Training and Testing Splits"
 python3 test_sf_prediction_riemannian_scfsl_percent_save_v3.py
 ```
+
+Singularity command:
+``` bash
+echo "Saving GQI Training and Testing Splits"
+singularity exec -B ./:/datain pyconnpredict-v1.0.0.sif python3 /datain/python3 test_sf_prediction_riemannian_gqi_sum_percent_save_v3.py
+echo "Saving MSMT CSD Training and Testing Splits"
+singularity exec -B ./:/datain pyconnpredict-v1.0.0.sif python3 /datain/test_sf_prediction_riemannian_msmt_percent_save_v3.py
+echo "Saving DTI Training and Testing Splits"
+singularity exec -B ./:/datain pyconnpredict-v1.0.0.sif python3 /datain/test_sf_prediction_riemannian_scfsl_percent_save_v3.py
+```
+
 Using slurm:
 ```bash
 sbatch -a 01 sf_predict_gqi.sh /path/to/base/directory/ beta yes project_directory_name
@@ -61,6 +72,26 @@ python3 test_sf_prediction_riemannian_scfsl_percent_part1.py
 python3 test_sf_prediction_riemannian_scfsl_percent_part2.py
 python3 test_sf_prediction_riemannian_scfsl_percent_part3.py
 python3 test_sf_prediction_riemannian_scfsl_percent_part4.py
+```
+
+
+Singularity command:
+``` bash
+echo "Running sf_prediction on GQI data"
+singularity exec -B ./:/datain pyconnpredict-v1.0.0.sif python3 /datain/test_sf_prediction_riemannian_gqi_sum_percent_part1.py
+singularity exec -B ./:/datain pyconnpredict-v1.0.0.sif python3 /datain/test_sf_prediction_riemannian_gqi_sum_percent_part2.py
+singularity exec -B ./:/datain pyconnpredict-v1.0.0.sif python3 /datain/test_sf_prediction_riemannian_gqi_sum_percent_part3.py
+singularity exec -B ./:/datain pyconnpredict-v1.0.0.sif python3 /datain/test_sf_prediction_riemannian_gqi_sum_percent_part4.py
+echo "Running sf_prediction on MSMT CSD data"
+singularity exec -B ./:/datain pyconnpredict-v1.0.0.sif python3 /datain/test_sf_prediction_riemannian_msmt_percent_part1.py
+singularity exec -B ./:/datain pyconnpredict-v1.0.0.sif python3 /datain/test_sf_prediction_riemannian_msmt_percent_part2.py
+singularity exec -B ./:/datain pyconnpredict-v1.0.0.sif python3 /datain/test_sf_prediction_riemannian_msmt_percent_part3.py
+singularity exec -B ./:/datain pyconnpredict-v1.0.0.sif python3 /datain/test_sf_prediction_riemannian_msmt_percent_part4.py
+echo "Running sf_prediction on DTI data"
+singularity exec -B ./:/datain pyconnpredict-v1.0.0.sif python3 /datain/test_sf_prediction_riemannian_scfsl_percent_part1.py
+singularity exec -B ./:/datain pyconnpredict-v1.0.0.sif python3 /datain/test_sf_prediction_riemannian_scfsl_percent_part2.py
+singularity exec -B ./:/datain pyconnpredict-v1.0.0.sif python3 /datain/test_sf_prediction_riemannian_scfsl_percent_part3.py
+singularity exec -B ./:/datain pyconnpredict-v1.0.0.sif python3 /datain/test_sf_prediction_riemannian_scfsl_percent_part4.py
 ```
 
 Using slurm:
@@ -92,11 +123,21 @@ From bash terminal:
 python3 collect_scores.py
 ```
 
+Singularity command:
+``` bash
+singularity exec -B ./:/datain pyconnpredict-v1.0.0.sif python3 /datain/collect_scores.py
+```
+
 Plot and perform statistical tests using the included Jupyter notebook
 
 From bash terminal:
 ``` bash
 jupyter-notebook plotting_and_stats.ipynb
+```
+
+Singularity command to run python script:
+``` bash
+singularity exec -B ./:/datain pyconnpredict-v1.0.0.sif python3 /datain/plotting_and_stats.py
 ```
 
 ### Requirements
@@ -112,16 +153,32 @@ Other requirements:
 
 A [Dockerfile](docker/Dockerfile) is included for building Docker (and subsequent Singularity) images if a containerized implementation is required.
 
-## TO-DO
+## TO-DO - RSFC Predict From SC
+
+* [X] Create Dockerfile and build instructions for Docker and Singularity
+* [X] Singularity examples
+* [X] Dependencies list in README.md 
+* [X] requirements.txt for python environment
+* [X] Usage examples
+* [X] Slurm scripts
+* [X] Slurm examples
+* [X] Create and streamline Jupyter notebook for plotting and stats
+* [X] Make python script as alternative to Jupyter notebook
+* [ ] Parallel versions and usage for scrambled matrices
+* [ ] Rename files (remove diag1) -optional-
+* [ ] Remove unused python scripts
+* [ ] Clarify intended use is with fraction weighting
+
+## TO-DO - Clinical Outcome Prediction
 
 * [X] Create Dockerfile and build instructions for Docker and Singularity
 * [ ] Singularity examples
-* [X] Dependencies list in README.md 
-* [X] requirements.txt for python environment
+* [ ] Dependencies list in README.md 
+* [ ] requirements.txt for python environment
 * [ ] Usage examples
-* [x] Slurm scripts
-* [x] Slurm examples
+* [ ] Slurm scripts
+* [ ] Slurm examples
 * [ ] Create and streamline Jupyter notebook for plotting and stats
 * [ ] Parallel versions and usage for scrambled matrices
-* [ ] Rename files (remove diag1)
-* [x] Remove unused python scripts
+* [ ] Rename files (remove diag1) -optional-
+* [ ] Remove unused python scripts
