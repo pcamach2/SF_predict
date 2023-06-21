@@ -73,11 +73,11 @@ for atlas in atlases:
             mdata_gfa_pass = mat[atlas + '_gfa_pass_connectivity']
             mdata_gfa_end = mat[atlas + '_gfa_end_connectivity']
             # variable in mat file
-            mdata_ncount_pass = mat[atlas + '_ncount_pass_connectivity']
-            mdata_ncount_end = mat[atlas + '_ncount_end_connectivity']
+            mdata_volume_normalized_count_pass = mat[atlas + '_volume_normalized_count_pass_connectivity']
+            mdata_volume_normalized_count_end = mat[atlas + '_volume_normalized_count_end_connectivity']
             # variable in mat file
-            mdata_count_pass = mat[atlas + '_ncount_pass_connectivity']
-            mdata_count_end = mat[atlas + '_ncount_end_connectivity']
+            mdata_count_pass = mat[atlas + '_count_pass_connectivity']
+            mdata_count_end = mat[atlas + '_count_end_connectivity']
             # variable in mat file
             mdata_mean_length_pass = mat[atlas +
                                          '_mean_length_pass_connectivity']
@@ -85,8 +85,8 @@ for atlas in atlases:
                                         '_mean_length_end_connectivity']
             allsub_mat_gfa_pass[i, :, :] = mdata_gfa_pass
             allsub_mat_gfa_end[i, :, :] = mdata_gfa_end
-            allsub_mat_ncount_pass[i, :, :] = mdata_ncount_pass
-            allsub_mat_ncount_end[i, :, :] = mdata_ncount_end
+            allsub_mat_volume_normalized_count_pass[i, :, :] = mdata_volume_normalized_count_pass
+            allsub_mat_volume_normalized_count_end[i, :, :] = mdata_volume_normalized_count_end
             allsub_mat_count_pass[i, :, :] = mdata_count_pass
             allsub_mat_count_end[i, :, :] = mdata_count_end
             allsub_mat_mean_length_pass[i, :, :] = mdata_mean_length_pass
@@ -100,8 +100,8 @@ for atlas in atlases:
         ii = ii + 1
 
     allsub_mat_gfa_sum = np.add(allsub_mat_gfa_pass, allsub_mat_gfa_end)
-    allsub_mat_ncount_sum = np.add(
-        allsub_mat_ncount_pass, allsub_mat_ncount_end)
+    allsub_mat_volume_normalized_count_sum = np.add(
+        allsub_mat_volume_normalized_count_pass, allsub_mat_volume_normalized_count_end)
     allsub_mat_count_sum = np.add(allsub_mat_count_pass, allsub_mat_count_end)
     allsub_mat_mean_length_sum = np.add(
         allsub_mat_mean_length_pass, allsub_mat_mean_length_end)
@@ -121,7 +121,7 @@ for atlas in atlases:
         ii = ii + 1
 
     # we need to import the fc matrices in a similar method as above!!! ^
-    for edge_weight in ['count_sum', 'ncount_sum', 'mean_length_sum', 'gfa_sum']:
+    for edge_weight in ['count_sum', 'volume_normalized_count_sum', 'mean_length_sum', 'gfa_sum']:
         SC = eval('allsub_mat_' + edge_weight)
         SC_triu = np.zeros((part_num, num_rois, num_rois))
         SC_triu_random = np.zeros((part_num, num_rois, num_rois))
