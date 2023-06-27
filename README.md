@@ -136,12 +136,12 @@ mv ./dataset/*scrambled* ./dataset_scrambled
 
 From bash terminal:
 ``` bash
-python3 collect_scores.py
+python3 collect_scores_percent.py
 ```
 
 Singularity command:
 ``` bash
-singularity exec -B ./:/datain pyconnpredict-v1.0.0.sif python3 /datain/collect_scores.py
+singularity exec -B ./:/datain pyconnpredict-v1.0.0.sif python3 /datain/collect_scores_percent.py
 ```
 
 ##### Plot and perform statistical tests using the included Jupyter notebook
