@@ -11,7 +11,7 @@ the BIC 3T MRI Processing Pipeline https://github.com/mrfil/pipeline-hpc/tree/SA
 and custom DTI-based structural connectivity pipeline (https://github.com/mrfil/scfsl), 
 which uses QSIPrep preprocessed derivatives as inputs for the CUDA-accelerated `bedpostx_gpu` and `probtrackx2_gpu` 
 
-All connectomes should be moved to a subfolder of the directory containing these scripts (`./datain`)
+All connectomes should be moved to a subfolder of the directory containing these scripts.
 
 ### Overall Workflow
 
