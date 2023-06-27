@@ -77,158 +77,214 @@ gqi_mean_length_sum_all = pd.DataFrame()
 gqi_volume_weighted_count_sum_all = pd.DataFrame()
 gqi_count_sum_all = pd.DataFrame()
 gqi_gfa_sum_all = pd.DataFrame()
-gqi_mean_length_pass_all = pd.DataFrame()
-gqi_volume_weighted_count_pass_all = pd.DataFrame()
-gqi_count_pass_all = pd.DataFrame()
-gqi_gfa_pass_all = pd.DataFrame()
-gqi_mean_length_end_all = pd.DataFrame()
-gqi_volume_weighted_count_end_all = pd.DataFrame()
-gqi_count_end_all = pd.DataFrame()
-gqi_gfa_end_all = pd.DataFrame()
+# gqi_mean_length_pass_all = pd.DataFrame()
+# gqi_volume_weighted_count_pass_all = pd.DataFrame()
+# gqi_count_pass_all = pd.DataFrame()
+# gqi_gfa_pass_all = pd.DataFrame()
+# gqi_mean_length_end_all = pd.DataFrame()
+# gqi_volume_weighted_count_end_all = pd.DataFrame()
+# gqi_count_end_all = pd.DataFrame()
+# gqi_gfa_end_all = pd.DataFrame()
 
 
 # import clean csvs
 # DTI
 
-files_mean_path_length = Path(main_path).glob(
-    'scores*percent*dti*mean*diag1*clean*csv')
-files_volume_weighted_count = Path(main_path).glob(
-    'scores*percent_aal116_dti_dti_volumeweighted_diag1_???_clean.csv')
-files_count = Path(main_path).glob(
-    'scores*percent*_aal116_dti_dti_count_diag1_???_clean.csv')
+files_mean_path_length = sorted(Path(main_path).glob(
+    'scores*percent*dti*mean*diag1*clean*csv'))
+files_volume_weighted_count = sorted(Path(main_path).glob(
+    'scores*percent_aal116_dti_dti_volumeweighted_diag1_???_clean.csv'))
+files_count = sorted(Path(main_path).glob(
+    'scores*percent*_aal116_dti_dti_count_diag1_???_clean.csv'))
 
 dfs = list()
 for f in files_volume_weighted_count:
-    data = pd.read_csv(f)
-    dfs.append(data)
+    # filter out any unwanted scrambled files
+    if 'scrambled' in str(f):
+        print("Scores for scrambled matrices found in dataset, ignoring")
+    else:
+        data = pd.read_csv(f)
+        dfs.append(data)
 dti_volume_weighted_count_all = pd.concat(dfs, ignore_index=True)
 
 dfs = list()
 for f in files_count:
-    data = pd.read_csv(f)
-    dfs.append(data)
+    if 'scrambled' in str(f):
+        print("Scores for scrambled matrices found in dataset, ignoring")
+    else:
+        data = pd.read_csv(f)
+        dfs.append(data)
 dti_count_all = pd.concat(dfs, ignore_index=True)
 
-dti_mean_path_length_all.describe()
-dti_volume_weighted_count_all.describe()
-dti_count_all.describe()
+
+dfs = list()
+for f in files_mean_path_length_all:
+    if 'scrambled' in str(f):
+        print("Scores for scrambled matrices found in dataset, ignoring")
+    else:
+        data = pd.read_csv(f)
+        dfs.append(data)
+dti_mean_path_length_all = pd.concat(dfs, ignore_index=True)
+
+# dti_mean_path_length_all.describe()
+# dti_volume_weighted_count_all.describe()
+# dti_count_all.describe()
 
 # MSMT
 
-files_sift_radius2_count = Path(main_path).glob(
-    'scores*percent*msmt_sift_radius2_count_diag1*clean*csv')
-files_sift_radius2_invnodevol_count = Path(main_path).glob(
-    'scores*percent*msmt_sift_invnodevol_radius2_count_diag1*clean*csv')
-files_radius2_count = Path(main_path).glob(
-    'scores*percent*msmt_radius2_count_diag1*clean*csv')
-files_radius2_meanlength = Path(main_path).glob(
-    'scores*percent*msmt_radius2_meanlength_diag1*clean*csv')
+files_sift_radius2_count = sorted(Path(main_path).glob(
+    'scores*percent*msmt_sift_radius2_count_diag1*clean*csv'))
+files_sift_radius2_invnodevol_count = sorted(Path(main_path).glob(
+    'scores*percent*msmt_sift_invnodevol_radius2_count_diag1*clean*csv'))
+files_radius2_count = sorted(Path(main_path).glob(
+    'scores*percent*msmt_radius2_count_diag1*clean*csv'))
+files_radius2_meanlength = sorted(Path(main_path).glob(
+    'scores*percent*msmt_radius2_meanlength_diag1*clean*csv'))
 
 dfs = list()
 for f in files_radius2_meanlength:
-    data = pd.read_csv(f)
-    dfs.append(data)
+    if 'scrambled' in str(f):
+        print("Scores for scrambled matrices found in dataset, ignoring")
+    else:
+        data = pd.read_csv(f)
+        dfs.append(data)
 msmt_radius2_meanlength_all = pd.concat(dfs, ignore_index=True)
-msmt_radius2_meanlength_all.describe()
+# msmt_radius2_meanlength_all.describe()
 dfs = list()
 for f in files_sift_radius2_invnodevol_count:
-    data = pd.read_csv(f)
-    dfs.append(data)
+    if 'scrambled' in str(f):
+        print("Scores for scrambled matrices found in dataset, ignoring")
+    else:
+        data = pd.read_csv(f)
+        dfs.append(data)
 msmt_sift_radius2_invnodevol_count_all = pd.concat(dfs, ignore_index=True)
-msmt_sift_radius2_invnodevol_count_all.describe()
+# msmt_sift_radius2_invnodevol_count_all.describe()
 dfs = list()
 for f in files_sift_radius2_count:
-    data = pd.read_csv(f)
-    dfs.append(data)
+    if 'scrambled' in str(f):
+        print("Scores for scrambled matrices found in dataset, ignoring")
+    else:
+        data = pd.read_csv(f)
+        dfs.append(data)
 msmt_sift_radius2_count_all = pd.concat(dfs, ignore_index=True)
-msmt_sift_radius2_count_all.describe()
+# msmt_sift_radius2_count_all.describe()
 dfs = list()
 for f in files_radius2_count:
-    data = pd.read_csv(f)
-    dfs.append(data)
+    if 'scrambled' in str(f):
+        print("Scores for scrambled matrices found in dataset, ignoring")
+    else:
+        data = pd.read_csv(f)
+        dfs.append(data)
 msmt_radius2_count_all = pd.concat(dfs, ignore_index=True)
-msmt_radius2_count_all.describe()
+# msmt_radius2_count_all.describe()
 
 # GQI
 
-files_mean_length_sum = Path(main_path).glob(
-    'scores*percent*gqi*mean_length_sum*clean*csv')
-files_mean_length_pass = Path(main_path).glob(
-    'scores*percent*gqi*mean_length_pass*clean*csv')
-files_mean_length_end = Path(main_path).glob(
-    'scores*percent*gqi*mean_length_end*clean*csv')
-files_volume_weighted_count_sum = Path(main_path).glob(
-    'scores*percent*gqi_volume_weighted_count_sum*clean*csv')
-files_volume_weighted_count_pass = Path(main_path).glob(
-    'scores*percent*gqi_volume_weighted_count_pass*clean*csv')
-files_volume_weighted_count_end = Path(main_path).glob(
-    'scores*percent*gqi_volume_weighted_count_end*clean*csv')
-files_count_sum = Path(main_path).glob(
-    'scores*percent*gqi_count_sum*clean*csv')
-files_count_pass = Path(main_path).glob(
-    'scores*percent*gqi_count_pass*clean*csv')
-files_count_end = Path(main_path).glob(
-    'scores*percent*gqi_count_end*clean*csv')
-# files_gfa_sum = Path(main_path).glob('scores*gqi_gfa_sum*clean*csv')
+files_mean_length_sum = sorted(Path(main_path).glob(
+    'scores*percent*gqi*mean_length_sum*clean*csv'))
+# files_mean_length_pass = sorted(Path(main_path).glob(
+#     'scores*percent*gqi*mean_length_pass*clean*csv'))
+# files_mean_length_end = sorted(Path(main_path).glob(
+#     'scores*percent*gqi*mean_length_end*clean*csv'))
+files_volume_weighted_count_sum = sorted(Path(main_path).glob(
+    'scores*percent*gqi_volume_weighted_count_sum*clean*csv'))
+# files_volume_weighted_count_pass = sorted(Path(main_path).glob(
+#     'scores*percent*gqi_volume_weighted_count_pass*clean*csv'))
+# files_volume_weighted_count_end = sorted(Path(main_path).glob(
+#     'scores*percent*gqi_volume_weighted_count_end*clean*csv'))
+files_count_sum = sorted(Path(main_path).glob(
+    'scores*percent*gqi_count_sum*clean*csv'))
+# files_count_pass = sorted(Path(main_path).glob(
+#     'scores*percent*gqi_count_pass*clean*csv'))
+# files_count_end = sorted(Path(main_path).glob(
+#     'scores*percent*gqi_count_end*clean*csv'))
+# # files_gfa_sum = Path(main_path).glob('scores*gqi_gfa_sum*clean*csv')
 # files_gfa_pass = Path(main_path).glob('scores*gqi_gfa_pass*clean*csv')
 # files_gfa_end = Path(main_path).glob('scores*gqi_gfa_end*clean*csv')
 
 dfs = list()
 for f in files_mean_length_sum:
-    data = pd.read_csv(f)
-    dfs.append(data)
+    if 'scrambled' in str(f):
+        print("Scores for scrambled matrices found in dataset, ignoring")
+    else:
+        data = pd.read_csv(f)
+        dfs.append(data)
 gqi_mean_length_sum_all = pd.concat(dfs, ignore_index=True)
-dfs = list()
-for f in files_mean_length_pass:
-    data = pd.read_csv(f)
-    dfs.append(data)
-gqi_mean_length_pass_all = pd.concat(dfs, ignore_index=True)
-dfs = list()
-for f in files_mean_length_end:
-    data = pd.read_csv(f)
-    dfs.append(data)
-gqi_mean_length_end_all = pd.concat(dfs, ignore_index=True)
+# dfs = list()
+# for f in files_mean_length_pass:
+#     if 'scrambled' in str(f):
+#         print("Scores for scrambled matrices found in dataset, ignoring")
+#     else:
+#         data = pd.read_csv(f)
+#         dfs.append(data)
+# gqi_mean_length_pass_all = pd.concat(dfs, ignore_index=True)
+# dfs = list()
+# for f in files_mean_length_end:
+#     if 'scrambled' in str(f):
+#         print("Scores for scrambled matrices found in dataset, ignoring")
+#     else:
+#         data = pd.read_csv(f)
+#         dfs.append(data)
+# gqi_mean_length_end_all = pd.concat(dfs, ignore_index=True)
 
 dfs = list()
 for f in files_volume_weighted_count_sum:
-    data = pd.read_csv(f)
-    dfs.append(data)
+    if 'scrambled' in str(f):
+        print("Scores for scrambled matrices found in dataset, ignoring")
+    else:
+        data = pd.read_csv(f)
+        dfs.append(data)
 gqi_volume_weighted_count_sum_all = pd.concat(dfs, ignore_index=True)
-dfs = list()
-for f in files_volume_weighted_count_pass:
-    data = pd.read_csv(f)
-    dfs.append(data)
-gqi_volume_weighted_count_pass_all = pd.concat(dfs, ignore_index=True)
-dfs = list()
-for f in files_volume_weighted_count_end:
-    data = pd.read_csv(f)
-    dfs.append(data)
-gqi_volume_weighted_count_end_all = pd.concat(dfs, ignore_index=True)
+# dfs = list()
+# for f in files_volume_weighted_count_pass:
+#     if 'scrambled' in str(f):
+#         print("Scores for scrambled matrices found in dataset, ignoring")
+#     else:
+#         data = pd.read_csv(f)
+#         dfs.append(data)
+# gqi_volume_weighted_count_pass_all = pd.concat(dfs, ignore_index=True)
+# dfs = list()
+# for f in files_volume_weighted_count_end:
+#     if 'scrambled' in str(f):
+#         print("Scores for scrambled matrices found in dataset, ignoring")
+#     else:
+#         data = pd.read_csv(f)
+#         dfs.append(data)
+# gqi_volume_weighted_count_end_all = pd.concat(dfs, ignore_index=True)
 dfs = list()
 for f in files_count_sum:
-    data = pd.read_csv(f)
-    dfs.append(data)
+    if 'scrambled' in str(f):
+        print("Scores for scrambled matrices found in dataset, ignoring")
+    else:
+        data = pd.read_csv(f)
+        dfs.append(data)
 gqi_count_sum_all = pd.concat(dfs, ignore_index=True)
-dfs = list()
-for f in files_count_pass:
-    data = pd.read_csv(f)
-    dfs.append(data)
-gqi_count_pass_all = pd.concat(dfs, ignore_index=True)
-dfs = list()
-for f in files_count_end:
-    data = pd.read_csv(f)
-    dfs.append(data)
-gqi_count_end_all = pd.concat(dfs, ignore_index=True)
+# dfs = list()
+# for f in files_count_pass:
+#     if 'scrambled' in str(f):
+#         print("Scores for scrambled matrices found in dataset, ignoring")
+#     else:
+#         data = pd.read_csv(f)
+#         dfs.append(data)
+# gqi_count_pass_all = pd.concat(dfs, ignore_index=True)
+# dfs = list()
+# for f in files_count_end:
+#     if 'scrambled' in str(f):
+#         print("Scores for scrambled matrices found in dataset, ignoring")
+#     else:
+#         data = pd.read_csv(f)
+#         dfs.append(data)
+# gqi_count_end_all = pd.concat(dfs, ignore_index=True)
 
 gqi_mean_length_sum_all.T.describe()
-gqi_mean_length_pass_all.T.describe()
-gqi_mean_length_end_all.T.describe()
+# gqi_mean_length_pass_all.T.describe()
+# gqi_mean_length_end_all.T.describe()
 gqi_volume_weighted_count_sum_all.T.describe()
-gqi_volume_weighted_count_pass_all.T.describe()
-gqi_volume_weighted_count_end_all.T.describe()
+# gqi_volume_weighted_count_pass_all.T.describe()
+# gqi_volume_weighted_count_end_all.T.describe()
 gqi_count_sum_all.T.describe()
-gqi_count_pass_all.T.describe()
-gqi_count_end_all.T.describe()
+# gqi_count_pass_all.T.describe()
+# gqi_count_end_all.T.describe()
 # gqi_gfa_sum_all.T.describe()
 # gqi_gfa_pass_all.T.describe()
 # gqi_gfa_end_all.T.describe()
