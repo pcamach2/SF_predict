@@ -76,7 +76,7 @@ msmt_radius2_meanlength_all = pd.DataFrame()
 gqi_mean_length_sum_all = pd.DataFrame()
 gqi_volume_weighted_count_sum_all = pd.DataFrame()
 gqi_count_sum_all = pd.DataFrame()
-gqi_gfa_sum_all = pd.DataFrame()
+# gqi_gfa_sum_all = pd.DataFrame()
 # gqi_mean_length_pass_all = pd.DataFrame()
 # gqi_volume_weighted_count_pass_all = pd.DataFrame()
 # gqi_count_pass_all = pd.DataFrame()
@@ -118,7 +118,7 @@ dti_count_all = pd.concat(dfs, ignore_index=True)
 
 
 dfs = list()
-for f in files_mean_path_length_all:
+for f in files_mean_path_length:
     if 'scrambled' in str(f):
         print("Scores for scrambled matrices found in dataset, ignoring")
     else:
