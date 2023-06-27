@@ -37,7 +37,7 @@ python3 volume_weight_gqi.py
 Singularity command:
 ``` bash
 echo "Saving GQI Training and Testing Splits"
-singularity exec -B ./:/datain pyconnpredict-v1.0.0.sif python3 /datain/volume_weight_gqi.py
+singularity exec -B ./:/datain,../PROJECT/bids:/bids pyconnpredict-v1.0.0.sif python3 /datain/volume_weight_gqi.py
 ```
 
 ##### Run python scripts for reading in structural connectivity matrices from different reconstruction workflows and saving out train-test split data
