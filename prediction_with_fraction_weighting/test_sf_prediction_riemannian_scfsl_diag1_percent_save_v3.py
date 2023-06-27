@@ -7,13 +7,13 @@ import bct
 os.chdir('/datain')
 
 # struct conn matrices
-matfilespath = '/datain/matfiles_dti_mean_path_length_06052023_/'
-inpath_files = os.listdir(matfilespath)
+matfilespath = '/datain/matfiles_dti_volwei_06222023_/'
+inpath_files = sorted(os.listdir(matfilespath))
 part_num = len(inpath_files)
 
 # RSFC matrices
-fcmatfilespath = '/datain/matfiles_aroma_06052023/'
-inpath_files_fc = os.listdir(fcmatfilespath)
+fcmatfilespath = '/datain/matfiles_aroma_06222023_/'
+inpath_files_fc = sorted(os.listdir(fcmatfilespath))
 part_num_fc = len(inpath_files_fc)
 
 scripts = '/datain/atlas_ids/'
@@ -73,7 +73,7 @@ for atlas in atlases:
 
     # for edge_weight in ['dti_volumeweighted', 'dti_count', 'dti_meanlength']:
     if num_rois == 116:
-        edge_weight = 'dti_meanlength'
+        edge_weight = 'dti_volumeweighted'
         SC = eval('allsub_mat_' + edge_weight)
         SC_triu = np.zeros((part_num, num_rois, num_rois))
         SC_triu_random = np.zeros((part_num, num_rois, num_rois))

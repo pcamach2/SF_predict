@@ -19,7 +19,7 @@ for atlas in atlases:
         num_rois = 116
 
     # we need to import the fc matrices in a similar method as above!!! ^
-    for edge_weight in 'count_sum', 'ncount_sum', 'mean_length_sum', 'gfa_sum':
+    for edge_weight in 'count_sum', 'volume_weighted_count_sum', 'mean_length_sum':
         for iii in np.arange(25):
             ii = iii
             f = h5py.File('/datain/dataset/train_percent_gqi_' +

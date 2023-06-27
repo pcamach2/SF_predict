@@ -1,6 +1,5 @@
 import matplotlib.pyplot as plt
 import pandas as pd
-import seaborn as sns
 import os
 import sys
 import numpy as np
@@ -9,7 +8,6 @@ import h5py
 import csv
 from pathlib import Path
 import matplotlib.pyplot as plt
-import seaborn as sns
 
 
 def collect_scores(data1, data2, data3, column_id, weight_type):
@@ -47,7 +45,7 @@ def collect_scores(data1, data2, data3, column_id, weight_type):
         msmt_name = 'MSMT CSD SIFT2 Node Volume Weighted Streamline Count'
         gqi_name = 'GQI Node Volume Weighted Streamline Count'
         dti_name = 'DTI Node Volume Weighted Streamline Count'
-    elif weight_type == 'mean_length':
+    elif weight_type == 'mean_path_length':
         msmt_name = 'MSMT CSD Mean Length'
         gqi_name = 'GQI Mean Length'
         dti_name = 'DTI Mean Length'
@@ -58,13 +56,12 @@ def collect_scores(data1, data2, data3, column_id, weight_type):
     df = pd.concat([data1m, data2m, data3m], axis=0, ignore_index=True)
 
     df.to_csv(
-        f"/home/paul/thesis/dev/SAY_sf_prediction_v3/scrambled_dataset/{weight_type}_all_percent_batch{column_id}.csv")
+        f"/datain/dataset/{weight_type}_all_percent_batch{column_id}.csv")
 
 
-# set path for data - this is /home/paul/thesis/dev/SAY_sf_prediction_v3/dataset for mounting to docker/singularity container
-# main_path = '/home/paul/thesis/dev/SAY_sf_prediction_v3/dataset'
+# set path for data - this is /datain/dataset for mounting to docker/singularity container
+main_path = '/datain/dataset'
 
-main_path = '/home/paul/thesis/dev/SAY_sf_prediction_v3/scrambled_dataset'
 
 # initialize data structures
 dti_mean_path_length_all = pd.DataFrame()
@@ -77,15 +74,15 @@ msmt_radius2_count_all = pd.DataFrame()
 msmt_radius2_meanlength_all = pd.DataFrame()
 
 gqi_mean_length_sum_all = pd.DataFrame()
-gqi_ncount_sum_all = pd.DataFrame()
+gqi_volume_weighted_count_sum_all = pd.DataFrame()
 gqi_count_sum_all = pd.DataFrame()
 gqi_gfa_sum_all = pd.DataFrame()
 gqi_mean_length_pass_all = pd.DataFrame()
-gqi_ncount_pass_all = pd.DataFrame()
+gqi_volume_weighted_count_pass_all = pd.DataFrame()
 gqi_count_pass_all = pd.DataFrame()
 gqi_gfa_pass_all = pd.DataFrame()
 gqi_mean_length_end_all = pd.DataFrame()
-gqi_ncount_end_all = pd.DataFrame()
+gqi_volume_weighted_count_end_all = pd.DataFrame()
 gqi_count_end_all = pd.DataFrame()
 gqi_gfa_end_all = pd.DataFrame()
 
@@ -112,17 +109,9 @@ for f in files_count:
     dfs.append(data)
 dti_count_all = pd.concat(dfs, ignore_index=True)
 
-
-dfs = list()
-for f in files_mean_path_length:
-    data = pd.read_csv(f)
-    dfs.append(data)
-dti_mean_path_length_all = pd.concat(dfs, ignore_index=True)
-
-
-print(dti_mean_path_length_all.describe())
-# dti_volume_weighted_count_all.describe()
-print(dti_count_all.describe())
+dti_mean_path_length_all.describe()
+dti_volume_weighted_count_all.describe()
+dti_count_all.describe()
 
 # MSMT
 
@@ -160,27 +149,26 @@ for f in files_radius2_count:
 msmt_radius2_count_all = pd.concat(dfs, ignore_index=True)
 msmt_radius2_count_all.describe()
 
-
 # GQI
 
 files_mean_length_sum = Path(main_path).glob(
     'scores*percent*gqi*mean_length_sum*clean*csv')
-# files_mean_length_pass = Path(main_path).glob(
-#     'scores*percent*gqi*mean_length_pass*clean*csv')
-# files_mean_length_end = Path(main_path).glob(
-#     'scores*percent*gqi*mean_length_end*clean*csv')
-files_ncount_sum = Path(main_path).glob(
-    'scores*percent*gqi_ncount_sum*clean*csv')
-# files_ncount_pass = Path(main_path).glob(
-#     'scores*percent*gqi_ncount_pass*clean*csv')
-# files_ncount_end = Path(main_path).glob(
-#     'scores*percent*gqi_ncount_end*clean*csv')
+files_mean_length_pass = Path(main_path).glob(
+    'scores*percent*gqi*mean_length_pass*clean*csv')
+files_mean_length_end = Path(main_path).glob(
+    'scores*percent*gqi*mean_length_end*clean*csv')
+files_volume_weighted_count_sum = Path(main_path).glob(
+    'scores*percent*gqi_volume_weighted_count_sum*clean*csv')
+files_volume_weighted_count_pass = Path(main_path).glob(
+    'scores*percent*gqi_volume_weighted_count_pass*clean*csv')
+files_volume_weighted_count_end = Path(main_path).glob(
+    'scores*percent*gqi_volume_weighted_count_end*clean*csv')
 files_count_sum = Path(main_path).glob(
     'scores*percent*gqi_count_sum*clean*csv')
-# files_count_pass = Path(main_path).glob(
-#     'scores*percent*gqi_count_pass*clean*csv')
-# files_count_end = Path(main_path).glob(
-#     'scores*percent*gqi_count_end*clean*csv')
+files_count_pass = Path(main_path).glob(
+    'scores*percent*gqi_count_pass*clean*csv')
+files_count_end = Path(main_path).glob(
+    'scores*percent*gqi_count_end*clean*csv')
 # files_gfa_sum = Path(main_path).glob('scores*gqi_gfa_sum*clean*csv')
 # files_gfa_pass = Path(main_path).glob('scores*gqi_gfa_pass*clean*csv')
 # files_gfa_end = Path(main_path).glob('scores*gqi_gfa_end*clean*csv')
@@ -190,62 +178,62 @@ for f in files_mean_length_sum:
     data = pd.read_csv(f)
     dfs.append(data)
 gqi_mean_length_sum_all = pd.concat(dfs, ignore_index=True)
-# dfs = list()
-# for f in files_mean_length_pass:
-#     data = pd.read_csv(f)
-#     dfs.append(data)
-# gqi_mean_length_pass_all = pd.concat(dfs, ignore_index=True)
-# dfs = list()
-# for f in files_mean_length_end:
-#     data = pd.read_csv(f)
-#     dfs.append(data)
-# gqi_mean_length_end_all = pd.concat(dfs, ignore_index=True)
-
 dfs = list()
-for f in files_ncount_sum:
+for f in files_mean_length_pass:
     data = pd.read_csv(f)
     dfs.append(data)
-gqi_ncount_sum_all = pd.concat(dfs, ignore_index=True)
-# dfs = list()
-# for f in files_ncount_pass:
-#     data = pd.read_csv(f)
-#     dfs.append(data)
-# gqi_ncount_pass_all = pd.concat(dfs, ignore_index=True)
-# dfs = list()
-# for f in files_ncount_end:
-#     data = pd.read_csv(f)
-#     dfs.append(data)
-# gqi_ncount_end_all = pd.concat(dfs, ignore_index=True)
+gqi_mean_length_pass_all = pd.concat(dfs, ignore_index=True)
+dfs = list()
+for f in files_mean_length_end:
+    data = pd.read_csv(f)
+    dfs.append(data)
+gqi_mean_length_end_all = pd.concat(dfs, ignore_index=True)
+
+dfs = list()
+for f in files_volume_weighted_count_sum:
+    data = pd.read_csv(f)
+    dfs.append(data)
+gqi_volume_weighted_count_sum_all = pd.concat(dfs, ignore_index=True)
+dfs = list()
+for f in files_volume_weighted_count_pass:
+    data = pd.read_csv(f)
+    dfs.append(data)
+gqi_volume_weighted_count_pass_all = pd.concat(dfs, ignore_index=True)
+dfs = list()
+for f in files_volume_weighted_count_end:
+    data = pd.read_csv(f)
+    dfs.append(data)
+gqi_volume_weighted_count_end_all = pd.concat(dfs, ignore_index=True)
 dfs = list()
 for f in files_count_sum:
     data = pd.read_csv(f)
     dfs.append(data)
 gqi_count_sum_all = pd.concat(dfs, ignore_index=True)
-# dfs = list()
-# for f in files_count_pass:
-#     data = pd.read_csv(f)
-#     dfs.append(data)
-# gqi_count_pass_all = pd.concat(dfs, ignore_index=True)
-# dfs = list()
-# for f in files_count_end:
-#     data = pd.read_csv(f)
-#     dfs.append(data)
-# gqi_count_end_all = pd.concat(dfs, ignore_index=True)
+dfs = list()
+for f in files_count_pass:
+    data = pd.read_csv(f)
+    dfs.append(data)
+gqi_count_pass_all = pd.concat(dfs, ignore_index=True)
+dfs = list()
+for f in files_count_end:
+    data = pd.read_csv(f)
+    dfs.append(data)
+gqi_count_end_all = pd.concat(dfs, ignore_index=True)
 
 gqi_mean_length_sum_all.T.describe()
-# gqi_mean_length_pass_all.T.describe()
-# gqi_mean_length_end_all.T.describe()
-gqi_ncount_sum_all.T.describe()
-# gqi_ncount_pass_all.T.describe()
-# gqi_ncount_end_all.T.describe()
+gqi_mean_length_pass_all.T.describe()
+gqi_mean_length_end_all.T.describe()
+gqi_volume_weighted_count_sum_all.T.describe()
+gqi_volume_weighted_count_pass_all.T.describe()
+gqi_volume_weighted_count_end_all.T.describe()
 gqi_count_sum_all.T.describe()
-# gqi_count_pass_all.T.describe()
-# gqi_count_end_all.T.describe()
+gqi_count_pass_all.T.describe()
+gqi_count_end_all.T.describe()
 # gqi_gfa_sum_all.T.describe()
 # gqi_gfa_pass_all.T.describe()
 # gqi_gfa_end_all.T.describe()
 
-for i in [25, 26]: #np.arange(25,26):
+for i in np.arange(50):
     colI = '0'
     if i < 10:
         colI = '00' + str(i)
@@ -254,7 +242,6 @@ for i in [25, 26]: #np.arange(25,26):
     collect_scores(msmt_sift_radius2_count_all, gqi_count_sum_all,
                    dti_count_all, column_id=colI, weight_type='count')
     collect_scores(msmt_sift_radius2_invnodevol_count_all,
-                   gqi_ncount_sum_all, dti_volume_weighted_count_all, column_id=colI, weight_type='volume_weighted')
+                   gqi_volume_weighted_count_sum_all, dti_volume_weighted_count_all, column_id=colI, weight_type='volume_weighted')
     collect_scores(msmt_radius2_meanlength_all, gqi_mean_length_sum_all,
                    dti_mean_path_length_all, column_id=colI, weight_type='mean_length')
-

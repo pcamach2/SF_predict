@@ -1,13 +1,12 @@
 import pickle
 import csv
 import h5py
-from utils import run_sf_prediction
 import os
 import sys
 import numpy as np
 # importing the sf_prediction package
 sys.path.insert(0, '/opt/micaopen/sf_prediction')
-
+from utils import run_sf_prediction
 
 # ,'schaefer100x17', 'schaefer100x17','schaefer100x7','schaefer200x17','schaefer200x7','schaefer400x17','schaefer400x7'
 atlases = ['aal116']
@@ -19,7 +18,7 @@ for atlas in atlases:
     num_rois = 0
     if atlas == 'aal116':
         num_rois = 116
-    for edge_weight in 'dti_meanlength', 'dti_count', 'dti_volumeweighted':
+    for edge_weight in ['dti_count', 'dti_volumeweighted']: # 'dti_meanlength', 
         for iii in np.arange(25):
             # Read
             ii = iii + 25

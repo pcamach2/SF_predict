@@ -6,13 +6,14 @@ import h5py
 import bct
 
 # struct conn matrices
-matfilespath = '/datain/matfiles_msmt_06052023_/'
-inpath_files = os.listdir(matfilespath)
+matfilespath = '/datain/matfiles_msmt_06222023_/'
+inpath_files = sorted(os.listdir(matfilespath))
+inpath_files.sort()
 part_num = len(inpath_files)
 
 # RSFC matrices
-fcmatfilespath = '/datain/matfiles_aroma_06052023/'
-inpath_files_fc = os.listdir(fcmatfilespath)
+fcmatfilespath = '/datain/matfiles_aroma_06222023_/'
+inpath_files_fc = sorted(os.listdir(fcmatfilespath))
 part_num_fc = len(inpath_files_fc)
 
 scripts = '/datain/atlas_ids/'
