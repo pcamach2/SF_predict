@@ -15,6 +15,8 @@ All connectomes should be moved to a subfolder of the directory containing these
 
 ### Overall Workflow
 
+* (Prerequisite) Process T1w, DWI, and resting-state fMRI using the [BIC MRI Pipeline](https://github.com/mrfil/pipeline-hpc/tree/SAY)
+* Use ROI volumes from SCFSL to weight the streamline count matrix from DSI Studio GQI workflow, save results in `gqinetwork.mat` files with the `volume_weight_gqi.py` script
 * Run python scripts for reading in structural connectivity matrices from different reconstruction workflows and saving out train-test split data
 * Run python scripts for reading in train and test data, performing sf_prediction, saving results
 * When all predictions finish, run reformat script (`reformat_sf_predict_scores_v3.sh`) in the parent directory of `dataset`
@@ -24,7 +26,21 @@ All connectomes should be moved to a subfolder of the directory containing these
 
 #### Usage
 
-Run python scripts for reading in structural connectivity matrices from different reconstruction workflows and saving out train-test split data
+##### Use ROI volumes from SCFSL to weight the streamline count matrix from DSI Studio GQI workflow, save results in `gqinetwork.mat` files with the `volume_weight_gqi.py` script
+
+From bash terminal:
+``` bash
+echo "Weighting streamline count matrices from GQI using ROI Volumes"
+python3 volume_weight_gqi.py
+```
+
+Singularity command:
+``` bash
+echo "Saving GQI Training and Testing Splits"
+singularity exec -B ./:/datain pyconnpredict-v1.0.0.sif python3 /datain/volume_weight_gqi.py
+```
+
+##### Run python scripts for reading in structural connectivity matrices from different reconstruction workflows and saving out train-test split data
 
 From bash terminal:
 ``` bash
@@ -53,7 +69,7 @@ sbatch -a 01 sf_predict_msmt.sh /path/to/base/directory/ beta yes project_direct
 sbatch -a 01 sf_predict_scfsl.sh /path/to/base/directory/ beta yes project_directory_name
 ```
 
-Run python scripts for reading in train and test data, performing sf_prediction, saving results
+##### Run python scripts for reading in train and test data, performing sf_prediction, saving results
 
 From bash terminal:
 ```bash
@@ -101,14 +117,14 @@ sbatch --a 01,02,03,04 sf_predict_msmt.sh /path/to/base/directory/ beta yes proj
 sbatch --a 01,02,03,04 sf_predict_scfsl.sh /path/to/base/directory/ beta yes project_directory_name
 ```
 
-When all predictions finish, run reformat script (`reformat_sf_predict_scores_v3.sh`) in the parent directory of `dataset`
+##### When all predictions finish, run reformat script (`reformat_sf_predict_scores_v3.sh`) in the parent directory of `dataset`
 
 From bash terminal:
 ```bash
 reformat_sf_predict_scores_v3.sh
 ```
 
-Move scrambled matrices to a separate folder (`dataset_scrambled`)
+##### Move scrambled matrices to a separate folder (`dataset_scrambled`)
 
 From bash terminal:
 ```bash
@@ -116,7 +132,7 @@ mkdir ./dataset_scrambled
 mv ./dataset/*scrambled* ./dataset_scrambled
 ```
 
-Make train-test split batch results csvs for plotting
+##### Make train-test split batch results csvs for plotting
 
 From bash terminal:
 ``` bash
@@ -128,7 +144,7 @@ Singularity command:
 singularity exec -B ./:/datain pyconnpredict-v1.0.0.sif python3 /datain/collect_scores.py
 ```
 
-Plot and perform statistical tests using the included Jupyter notebook
+##### Plot and perform statistical tests using the included Jupyter notebook
 
 From bash terminal:
 ``` bash
@@ -167,7 +183,7 @@ A [Dockerfile](docker/Dockerfile) is included for building Docker (and subsequen
 * [ ] Parallel versions and usage for scrambled matrices
 * [ ] Rename files (remove diag1) -optional-
 * [ ] Remove unused python scripts
-* [ ] Clarify intended use is with fraction weighting
+* [X] Clarify intended use is with fraction weighting
 
 ## TO-DO - Clinical Outcome Prediction
 
