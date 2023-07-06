@@ -22,12 +22,12 @@ def save_scores_preds_params(
         fl = '_percent_' + atlas + '_' + recon + '_' + edge_weight + '_diag1_n' + str(batch_n)
     # save scores to disk
     scores_test.to_csv('/datain/dataset/scores_test' + fl + '.csv')
-    scores_train.to_csv('/datain/dataset/scores_train_' + fl + '.csv')
+    scores_train.to_csv('/datain/dataset/scores_train' + fl + '.csv')
     # save preds to disk
-    with open('/datain/dataset/preds_' + fl + '.pkl', 'wb') as fp:
+    with open('/datain/dataset/preds' + fl + '.pkl', 'wb') as fp:
         pickle.dump(preds, fp)
     # save params to disk as pickle
-    with open('/datain/dataset/params_' + fl + '.pkl', 'wb') as fp:
+    with open('/datain/dataset/params' + fl + '.pkl', 'wb') as fp:
         pickle.dump(params, fp)
 
 
@@ -39,7 +39,7 @@ for atlas in atlases:
     # we need to import the fc matrices in a similar method as above!!! ^
     for edge_weight in 'count_sum', 'volume_weighted_count_sum', 'mean_length_sum':
         for iii in np.arange(13):
-            batch_n = iii + 25
+            batch_n = iii + 12
             recon = 'gqi'
             f = h5py.File('/datain/dataset/train_percent_' + recon + '_' +
                           edge_weight + '_diag1_' + str(batch_n) + '.h5py', 'r')

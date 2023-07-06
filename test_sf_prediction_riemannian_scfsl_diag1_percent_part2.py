@@ -22,12 +22,12 @@ def save_scores_preds_params(
         fl = '_percent_' + atlas + '_' + recon + '_' + edge_weight + '_diag1_n' + str(batch_n)
     # save scores to disk
     scores_test.to_csv('/datain/dataset/scores_test' + fl + '.csv')
-    scores_train.to_csv('/datain/dataset/scores_train_' + fl + '.csv')
+    scores_train.to_csv('/datain/dataset/scores_train' + fl + '.csv')
     # save preds to disk
-    with open('/datain/dataset/preds_' + fl + '.pkl', 'wb') as fp:
+    with open('/datain/dataset/preds' + fl + '.pkl', 'wb') as fp:
         pickle.dump(preds, fp)
     # save params to disk as pickle
-    with open('/datain/dataset/params_' + fl + '.pkl', 'wb') as fp:
+    with open('/datain/dataset/params' + fl + '.pkl', 'wb') as fp:
         pickle.dump(params, fp)
 
 
