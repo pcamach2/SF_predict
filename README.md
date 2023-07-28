@@ -156,6 +156,10 @@ Singularity command to run python script:
 singularity exec -B ./:/datain pyconnpredict-v1.0.0.sif python3 /datain/plotting_and_stats.py
 ```
 
+#### Clinical data prediction - Brain Basis Set Regression of Functional Fitness Score 
+
+lorem ipsum
+
 ### Requirements
 
 This project utilizes a model from the following paper, which should be cited:
@@ -180,7 +184,6 @@ A [Dockerfile](docker/Dockerfile) is included for building Docker (and subsequen
 * [X] Slurm examples
 * [X] Create and streamline Jupyter notebook for plotting and stats
 * [X] Make python script as alternative to Jupyter notebook
-* [ ] Parallel versions and usage for scrambled matrices
 * [ ] Rename files (remove diag1) -optional-
 * [ ] Remove unused python scripts
 * [X] Clarify intended use is with fraction weighting
@@ -190,7 +193,7 @@ A [Dockerfile](docker/Dockerfile) is included for building Docker (and subsequen
 * [X] Create Dockerfile and build instructions for Docker and Singularity
 * [ ] Singularity examples
 * [ ] Dependencies list in README.md 
-* [ ] requirements.txt for python environment
+* [X] requirements.txt for python environment
 * [ ] Usage examples
 * [ ] Slurm scripts
 * [ ] Slurm examples
