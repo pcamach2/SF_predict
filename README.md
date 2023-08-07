@@ -156,9 +156,17 @@ Singularity command to run python script:
 singularity exec -B ./:/datain pyconnpredict-v1.0.0.sif python3 /datain/plotting_and_stats.py
 ```
 
-#### Clinical data prediction - Brain Basis Set Regression of Functional Fitness Score 
+#### Clinical data prediction - RSFC PCA Regression of Functional Fitness Score 
 
-lorem ipsum
+From bash terminal:
+``` bash
+python3 functional_fitness_modeling.py /path/to/prediction_folder
+```
+
+Singularity command to run python script:
+``` bash
+singularity exec -B ./:/datain pyconnpredict-v1.0.0.sif python3 /datain/functional_fitness_modeling.py /path/to/prediction_folder
+```
 
 ### Requirements
 
@@ -184,20 +192,15 @@ A [Dockerfile](docker/Dockerfile) is included for building Docker (and subsequen
 * [X] Slurm examples
 * [X] Create and streamline Jupyter notebook for plotting and stats
 * [X] Make python script as alternative to Jupyter notebook
-* [ ] Rename files (remove diag1) -optional-
-* [ ] Remove unused python scripts
+* [X] Remove unused python scripts
 * [X] Clarify intended use is with fraction weighting
 
 ## TO-DO - Clinical Outcome Prediction
 
 * [X] Create Dockerfile and build instructions for Docker and Singularity
-* [ ] Singularity examples
-* [ ] Dependencies list in README.md 
+* [X] Singularity examples
+* [X] Dependencies list in README.md 
 * [X] requirements.txt for python environment
-* [ ] Usage examples
-* [ ] Slurm scripts
-* [ ] Slurm examples
-* [ ] Create and streamline Jupyter notebook for plotting and stats
-* [ ] Parallel versions and usage for scrambled matrices
+* [X] Usage examples
 * [ ] Rename files (remove diag1) -optional-
-* [ ] Remove unused python scripts
+* [X] Remove unused python scripts
