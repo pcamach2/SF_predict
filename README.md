@@ -156,7 +156,18 @@ Singularity command to run python script:
 singularity exec -B ./:/datain pyconnpredict-v1.0.0.sif python3 /datain/plotting_and_stats.py
 ```
 
-#### Clinical data prediction - RSFC PCA Regression of Functional Fitness Score 
+#### Clinical data prediction
+
+The script used here can be adjusted for four main options:
+* Train-test split batch number
+* Reconstruction + structural connectivity matrix weight
+* Cardiorespiratory fitness and clinical motor function tests to include in factor analysis to produce functional fitness score
+* Specific demographic data to use as predictors
+
+Ensure that your demographic and clinical data is complete and contained in a csv file in the prediction folder
+*Include participant ID numbers to match with training and testing matrices created above*
+
+##### Functional Fitness Score & RSFC PCA Regression
 
 From bash terminal:
 ``` bash
