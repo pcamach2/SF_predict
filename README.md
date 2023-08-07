@@ -121,7 +121,7 @@ sbatch --a 01,02,03,04 sf_predict_scfsl.sh /path/to/base/directory/ beta yes pro
 
 From bash terminal:
 ```bash
-reformat_sf_predict_scores_v3.sh
+reformat_sf_predict_scores_v5.sh
 ```
 
 ##### Move scrambled matrices to a separate folder (`dataset_scrambled`)
