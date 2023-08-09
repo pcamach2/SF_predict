@@ -194,24 +194,23 @@ A [Dockerfile](docker/Dockerfile) is included for building Docker (and subsequen
 
 ## TO-DO - RSFC Predict From SC
 
-* [X] Create Dockerfile and build instructions for Docker and Singularity
-* [X] Singularity examples
-* [X] Dependencies list in README.md 
-* [X] requirements.txt for python environment
-* [X] Usage examples
-* [X] Slurm scripts
-* [X] Slurm examples
-* [X] Create and streamline Jupyter notebook for plotting and stats
-* [X] Make python script as alternative to Jupyter notebook
-* [X] Remove unused python scripts
-* [X] Clarify intended use is with fraction weighting
+* [X] ~Create Dockerfile and build instructions for Docker and Singularity~
+* [X] ~Singularity examples~
+* [X] ~Dependencies list in README.md~
+* [X] ~requirements.txt for python environment~
+* [X] ~Usage examples~
+* [X] ~Slurm scripts~
+* [X] ~Slurm examples~
+* [X] ~Create and streamline Jupyter notebook for plotting and stats~
+* [X] ~Make python script as alternative to Jupyter notebook~
+* [X] ~Remove unused python scripts~
+* [X] ~Clarify intended use is with fraction weighting~
 
 ## TO-DO - Clinical Outcome Prediction
 
-* [X] Create Dockerfile and build instructions for Docker and Singularity
-* [X] Singularity examples
-* [X] Dependencies list in README.md 
-* [X] requirements.txt for python environment
-* [X] Usage examples
-* [ ] Rename files (remove diag1) -optional-
-* [X] Remove unused python scripts
+* [X] ~Create Dockerfile and build instructions for Docker and Singularity~
+* [X] ~Singularity examples~
+* [X] ~Dependencies list in README.md~
+* [X] ~requirements.txt for python environment~
+* [X] ~Usage examples~
+* [X] ~Remove unused python scripts~
