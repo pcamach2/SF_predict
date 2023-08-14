@@ -13,6 +13,7 @@ which uses QSIPrep preprocessed derivatives as inputs for the CUDA-accelerated `
 
 All connectomes should be moved to a subfolder of the directory containing these scripts.
 
+
 ### Overall Workflow
 
 * (Prerequisite) Process T1w, DWI, and resting-state fMRI using the [BIC MRI Pipeline](https://github.com/mrfil/pipeline-hpc/tree/SAY)
@@ -41,6 +42,12 @@ singularity exec -B ./:/datain,../PROJECT/bids:/bids pyconnpredict-v1.0.0.sif py
 ```
 
 ##### Run python scripts for reading in structural connectivity matrices from different reconstruction workflows and saving out train-test split data
+
+*Scrambled structural connectivity matrices are produced to check whether the structure of the input matrices is 
+important for predicting the resting-state functional connectivity. If you are interested in permutation testing, 
+a much larger number (100 to 10000) of scrambled matrices per observed ordered matrix must be produced. 
+This increases the computational cost and required file storage space by several orders of magnitude. 
+If you are not interested in performing such tests, use the option `no_scramble` when running these scripts*
 
 From bash terminal:
 ``` bash
@@ -191,26 +198,3 @@ Other requirements:
 * Bash terminal for shell scripts
 
 A [Dockerfile](docker/Dockerfile) is included for building Docker (and subsequent Singularity) images if a containerized implementation is required.
-
-## TO-DO - RSFC Predict From SC
-
-* [X] ~Create Dockerfile and build instructions for Docker and Singularity~
-* [X] ~Singularity examples~
-* [X] ~Dependencies list in README.md~
-* [X] ~requirements.txt for python environment~
-* [X] ~Usage examples~
-* [X] ~Slurm scripts~
-* [X] ~Slurm examples~
-* [X] ~Create and streamline Jupyter notebook for plotting and stats~
-* [X] ~Make python script as alternative to Jupyter notebook~
-* [X] ~Remove unused python scripts~
-* [X] ~Clarify intended use is with fraction weighting~
-
-## TO-DO - Clinical Outcome Prediction
-
-* [X] ~Create Dockerfile and build instructions for Docker and Singularity~
-* [X] ~Singularity examples~
-* [X] ~Dependencies list in README.md~
-* [X] ~requirements.txt for python environment~
-* [X] ~Usage examples~
-* [X] ~Remove unused python scripts~
