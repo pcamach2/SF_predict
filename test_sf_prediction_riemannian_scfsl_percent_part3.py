@@ -1,3 +1,4 @@
+# Usage: test_sf_prediction_riemannian_scfsl_percent_part3.py <no_scrambled>
 import pickle
 import csv
 import h5py
@@ -6,6 +7,13 @@ import numpy as np
 # importing the sf_prediction package
 sys.path.insert(0, '/opt/micaopen/sf_prediction')
 from utils import run_sf_prediction
+import argparse
+
+# parse input arguments
+parser = argparse.ArgumentParser()
+parser.add_argument('no_scramble', help='skip testing of scrambled connectomes', type=bool, default=True)
+args = parser.parse_args()
+no_scramble = args.no_scramble
 
 scripts = '/datain/atlas_ids/'
 atlases = ['aal116']  # ,'schaefer100x17', 'schaefer100x17','schaefer100x7','schaefer200x17','schaefer200x7','schaefer400x17','schaefer400x7','aal116','power264','gordon333','aicha384','brainnetome246'
@@ -63,24 +71,25 @@ for atlas in atlases:
             # save outputs to disk
             save_scores_preds_params(
                 scores_test, scores_train, preds, params, atlas, recon, edge_weight, batch_n, scrambled=False)
-            # repeat for scrambled data
-            f = h5py.File('/datain/dataset/train_scrambled_percent_' + recon + '_' +
-                          edge_weight + '_diag1_' + str(batch_n) + '.h5py', 'r')
-            sc_train = list(np.array(f.get('inputs')))
-            fc_train = list(np.array(f.get('labels')))
-            f.close()
-            f = h5py.File('/datain/dataset/test_scrambled_percent_' + recon + '_' +
-                          edge_weight + '_diag1_' + str(batch_n) + '.h5py', 'r')
-            sc_test = list(np.array(f.get('inputs')))
-            fc_test = list(np.array(f.get('labels')))
-            f.close()
-            scores_train, scores_test, params, preds = run_sf_prediction(
-                sc_train, fc_train, sc_test, fc_test, save_all_scores=True)
-            # add file names to scores and preds
-            scores_test['file_name_test'] = file_names_test
-            scores_train['file_name_train'] = file_names_train
-            print(scores_test)
-            print(params)
-            # save outputs to disk
-            save_scores_preds_params(
-                scores_test, scores_train, preds, params, atlas, recon, edge_weight, batch_n, scrambled=True)
+            if not no_scramble:
+                # repeat for scrambled data
+                f = h5py.File('/datain/dataset/train_scrambled_percent_' + recon + '_' +
+                              edge_weight + '_diag1_' + str(batch_n) + '.h5py', 'r')
+                sc_train = list(np.array(f.get('inputs')))
+                fc_train = list(np.array(f.get('labels')))
+                f.close()
+                f = h5py.File('/datain/dataset/test_scrambled_percent_' + recon + '_' +
+                              edge_weight + '_diag1_' + str(batch_n) + '.h5py', 'r')
+                sc_test = list(np.array(f.get('inputs')))
+                fc_test = list(np.array(f.get('labels')))
+                f.close()
+                scores_train, scores_test, params, preds = run_sf_prediction(
+                    sc_train, fc_train, sc_test, fc_test, save_all_scores=True)
+                # add file names to scores and preds
+                scores_test['file_name_test'] = file_names_test
+                scores_train['file_name_train'] = file_names_train
+                print(scores_test)
+                print(params)
+                # save outputs to disk
+                save_scores_preds_params(
+                    scores_test, scores_train, preds, params, atlas, recon, edge_weight, batch_n, scrambled=True)
