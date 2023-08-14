@@ -52,21 +52,21 @@ If you are not interested in performing such tests, use the option `no_scramble`
 From bash terminal:
 ``` bash
 echo "Saving GQI Training and Testing Splits"
-python3 test_sf_prediction_riemannian_gqi_sum_percent_save_v3.py
+python3 test_sf_prediction_riemannian_gqi_sum_percent_save_v5.py gqi_files_dir fcon_files_dir no_scramble
 echo "Saving MSMT CSD Training and Testing Splits"
-python3 test_sf_prediction_riemannian_msmt_percent_save_v3.py
+python3 test_sf_prediction_riemannian_msmt_percent_save_v5.py msmt_files_dir fcon_files_dir no_scramble
 echo "Saving DTI Training and Testing Splits"
-python3 test_sf_prediction_riemannian_scfsl_percent_save_v3.py
+python3 test_sf_prediction_riemannian_scfsl_percent_save_v5.py scfsl_files_dir fcon_files_dir no_scramble
 ```
 
 Singularity command:
 ``` bash
 echo "Saving GQI Training and Testing Splits"
-singularity exec -B ./:/datain pyconnpredict-v1.0.0.sif python3 /datain/python3 test_sf_prediction_riemannian_gqi_sum_percent_save_v3.py
+singularity exec -B ./:/datain pyconnpredict-v1.0.0.sif python3 /datain/python3 test_sf_prediction_riemannian_gqi_sum_percent_save_v3.py gqi_files_dir fcon_files_dir no_scramble
 echo "Saving MSMT CSD Training and Testing Splits"
-singularity exec -B ./:/datain pyconnpredict-v1.0.0.sif python3 /datain/test_sf_prediction_riemannian_msmt_percent_save_v3.py
+singularity exec -B ./:/datain pyconnpredict-v1.0.0.sif python3 /datain/test_sf_prediction_riemannian_msmt_percent_save_v3.py msmt_files_dir fcon_files_dir no_scramble
 echo "Saving DTI Training and Testing Splits"
-singularity exec -B ./:/datain pyconnpredict-v1.0.0.sif python3 /datain/test_sf_prediction_riemannian_scfsl_percent_save_v3.py
+singularity exec -B ./:/datain pyconnpredict-v1.0.0.sif python3 /datain/test_sf_prediction_riemannian_scfsl_percent_save_v3.py scfsl_files_dir fcon_files_dir no_scramble
 ```
 
 Using slurm:
@@ -81,40 +81,40 @@ sbatch -a 01 sf_predict_scfsl.sh /path/to/base/directory/ beta yes project_direc
 From bash terminal:
 ```bash
 echo "Running sf_prediction on GQI data"
-python3 test_sf_prediction_riemannian_gqi_sum_percent_part1.py
-python3 test_sf_prediction_riemannian_gqi_sum_percent_part2.py
-python3 test_sf_prediction_riemannian_gqi_sum_percent_part3.py
-python3 test_sf_prediction_riemannian_gqi_sum_percent_part4.py
+python3 test_sf_prediction_riemannian_gqi_sum_percent_part1.py no_scramble
+python3 test_sf_prediction_riemannian_gqi_sum_percent_part2.py no_scramble
+python3 test_sf_prediction_riemannian_gqi_sum_percent_part3.py no_scramble
+python3 test_sf_prediction_riemannian_gqi_sum_percent_part4.py no_scramble
 echo "Running sf_prediction on MSMT CSD data"
-python3 test_sf_prediction_riemannian_msmt_percent_part1.py
-python3 test_sf_prediction_riemannian_msmt_percent_part2.py
-python3 test_sf_prediction_riemannian_msmt_percent_part3.py
-python3 test_sf_prediction_riemannian_msmt_percent_part4.py
+python3 test_sf_prediction_riemannian_msmt_percent_part1.py no_scramble
+python3 test_sf_prediction_riemannian_msmt_percent_part2.py no_scramble
+python3 test_sf_prediction_riemannian_msmt_percent_part3.py no_scramble
+python3 test_sf_prediction_riemannian_msmt_percent_part4.py no_scramble
 echo "Running sf_prediction on DTI data"
-python3 test_sf_prediction_riemannian_scfsl_percent_part1.py
-python3 test_sf_prediction_riemannian_scfsl_percent_part2.py
-python3 test_sf_prediction_riemannian_scfsl_percent_part3.py
-python3 test_sf_prediction_riemannian_scfsl_percent_part4.py
+python3 test_sf_prediction_riemannian_scfsl_percent_part1.py no_scramble
+python3 test_sf_prediction_riemannian_scfsl_percent_part2.py no_scramble
+python3 test_sf_prediction_riemannian_scfsl_percent_part3.py no_scramble
+python3 test_sf_prediction_riemannian_scfsl_percent_part4.py no_scramble
 ```
 
 
 Singularity command:
 ``` bash
 echo "Running sf_prediction on GQI data"
-singularity exec -B ./:/datain pyconnpredict-v1.0.0.sif python3 /datain/test_sf_prediction_riemannian_gqi_sum_percent_part1.py
-singularity exec -B ./:/datain pyconnpredict-v1.0.0.sif python3 /datain/test_sf_prediction_riemannian_gqi_sum_percent_part2.py
-singularity exec -B ./:/datain pyconnpredict-v1.0.0.sif python3 /datain/test_sf_prediction_riemannian_gqi_sum_percent_part3.py
-singularity exec -B ./:/datain pyconnpredict-v1.0.0.sif python3 /datain/test_sf_prediction_riemannian_gqi_sum_percent_part4.py
+singularity exec -B ./:/datain pyconnpredict-v1.0.0.sif python3 /datain/test_sf_prediction_riemannian_gqi_sum_percent_part1.py no_scramble
+singularity exec -B ./:/datain pyconnpredict-v1.0.0.sif python3 /datain/test_sf_prediction_riemannian_gqi_sum_percent_part2.py no_scramble
+singularity exec -B ./:/datain pyconnpredict-v1.0.0.sif python3 /datain/test_sf_prediction_riemannian_gqi_sum_percent_part3.py no_scramble
+singularity exec -B ./:/datain pyconnpredict-v1.0.0.sif python3 /datain/test_sf_prediction_riemannian_gqi_sum_percent_part4.py no_scramble
 echo "Running sf_prediction on MSMT CSD data"
-singularity exec -B ./:/datain pyconnpredict-v1.0.0.sif python3 /datain/test_sf_prediction_riemannian_msmt_percent_part1.py
-singularity exec -B ./:/datain pyconnpredict-v1.0.0.sif python3 /datain/test_sf_prediction_riemannian_msmt_percent_part2.py
-singularity exec -B ./:/datain pyconnpredict-v1.0.0.sif python3 /datain/test_sf_prediction_riemannian_msmt_percent_part3.py
-singularity exec -B ./:/datain pyconnpredict-v1.0.0.sif python3 /datain/test_sf_prediction_riemannian_msmt_percent_part4.py
+singularity exec -B ./:/datain pyconnpredict-v1.0.0.sif python3 /datain/test_sf_prediction_riemannian_msmt_percent_part1.py no_scramble
+singularity exec -B ./:/datain pyconnpredict-v1.0.0.sif python3 /datain/test_sf_prediction_riemannian_msmt_percent_part2.py no_scramble
+singularity exec -B ./:/datain pyconnpredict-v1.0.0.sif python3 /datain/test_sf_prediction_riemannian_msmt_percent_part3.py no_scramble
+singularity exec -B ./:/datain pyconnpredict-v1.0.0.sif python3 /datain/test_sf_prediction_riemannian_msmt_percent_part4.py no_scramble
 echo "Running sf_prediction on DTI data"
-singularity exec -B ./:/datain pyconnpredict-v1.0.0.sif python3 /datain/test_sf_prediction_riemannian_scfsl_percent_part1.py
-singularity exec -B ./:/datain pyconnpredict-v1.0.0.sif python3 /datain/test_sf_prediction_riemannian_scfsl_percent_part2.py
-singularity exec -B ./:/datain pyconnpredict-v1.0.0.sif python3 /datain/test_sf_prediction_riemannian_scfsl_percent_part3.py
-singularity exec -B ./:/datain pyconnpredict-v1.0.0.sif python3 /datain/test_sf_prediction_riemannian_scfsl_percent_part4.py
+singularity exec -B ./:/datain pyconnpredict-v1.0.0.sif python3 /datain/test_sf_prediction_riemannian_scfsl_percent_part1.py no_scramble
+singularity exec -B ./:/datain pyconnpredict-v1.0.0.sif python3 /datain/test_sf_prediction_riemannian_scfsl_percent_part2.py no_scramble
+singularity exec -B ./:/datain pyconnpredict-v1.0.0.sif python3 /datain/test_sf_prediction_riemannian_scfsl_percent_part3.py no_scramble
+singularity exec -B ./:/datain pyconnpredict-v1.0.0.sif python3 /datain/test_sf_prediction_riemannian_scfsl_percent_part4.py no_scramble
 ```
 
 Using slurm:
@@ -131,7 +131,7 @@ From bash terminal:
 reformat_sf_predict_scores_v5.sh
 ```
 
-##### Move scrambled matrices to a separate folder (`dataset_scrambled`)
+##### Move scrambled matrices to a separate folder (`dataset_scrambled`) *optional*
 
 From bash terminal:
 ```bash
