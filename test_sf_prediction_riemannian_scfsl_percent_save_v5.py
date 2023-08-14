@@ -1,18 +1,30 @@
+# usage: test_sf_prediction_riemannian_scfsl_percent_save_v5.py <sc_connectomes_dir> <functional_connectomes_dir> <no_scramble>
 import os
 import numpy as np
 from sklearn.model_selection import train_test_split
 import h5py
 import bct
+import argparse
 
 os.chdir('/datain')
 
+# parse input arguments
+parser = argparse.ArgumentParser()
+parser.add_argument('sc_connectomes_dir', help='path to structural connectomes directory', type=str, required=True)
+parser.add_argument('fc_connectomes_dir', help='path to functional connectomes directory', type=str, required=True)
+parser.add_argument('no_scramble', help='skip production and testing of scrambled connectomes', type=bool, default=True)
+args = parser.parse_args()
+sc_connectomes_dir = args.sc_connectomes_dir
+fc_connectomes_dir = args.fc_connectomes_dir
+no_scramble = args.no_scramble
+
 # struct conn matrices
-matfilespath = '/datain/matfiles_dti_volwei_06222023_/'
+matfilespath = '/datain/' + sc_connectomes_dir
 inpath_files = sorted(os.listdir(matfilespath))
 part_num = len(inpath_files)
 
 # RSFC matrices
-fcmatfilespath = '/datain/matfiles_aroma_06222023_/'
+fcmatfilespath = '/datain/' + fc_connectomes_dir
 inpath_files_fc = sorted(os.listdir(fcmatfilespath))
 part_num_fc = len(inpath_files_fc)
 
@@ -89,24 +101,26 @@ for atlas in atlases:
                     if X[j, jj] > 0:
                         X[j, jj] = X[j, jj] / np.sum(X[j, :])
             density[i] = bct.density_und(X)[0]
-            # scramble X
-            X_random = X
-            rng = np.random.default_rng()
-            X_random = rng.permuted(X_random, axis=0)
-            X_random = rng.permuted(X_random, axis=1)
+            if not no_scramble:
+                # scramble X
+                X_random = X
+                density[i] = bct.density_und(X)[0]
+                rng = np.random.default_rng()
+                X_random = rng.permuted(X_random, axis=0)
+                X_random = rng.permuted(X_random, axis=1)
+                v_random = X_random[np.triu_indices(X_random.shape[0], k=0)]
+                X_random[np.triu_indices(X_random.shape[0], k=0)] = v_random
+                X_random = X_random + X_random.T - np.diag(np.diag(X_random))
+                np.fill_diagonal(X_random, 1)
+                SC_triu_random[i] = X_random
             # get the upper triangular part of this matrix
             v = X[np.triu_indices(X.shape[0], k=0)]
             X[np.triu_indices(X.shape[0], k=0)] = v
             X = X + X.T - np.diag(np.diag(X))
-            v_random = X_random[np.triu_indices(X_random.shape[0], k=0)]
-            X_random[np.triu_indices(X_random.shape[0], k=0)] = v_random
-            X_random = X_random + X_random.T - np.diag(np.diag(X_random))
             # normalize and add diagonal as 1 per Oualid
             # X = X/X.max()
             np.fill_diagonal(X, 1)
             SC_triu[i] = X
-            np.fill_diagonal(X_random, 1)
-            SC_triu_random[i] = X_random
             # SC_sparse = csr_matrix(SC_triu[i])
             # SC_triu[i] = SC_sparse.todense()
             i = i + 1
@@ -135,19 +149,20 @@ for atlas in atlases:
             f_test.create_dataset("file_name_test", data=np.array(
                 file_name_test, dtype=h5py.string_dtype(encoding='utf-8')))
             f_test.close()
-            f_train_scrambled = h5py.File('/datain/dataset/train_scrambled_percent_dti_' +
-                          edge_weight + '_diag1_' + str(iii) + '.h5py', 'w')
-            f_train_scrambled.create_dataset("inputs", data=SC_triu_random[sc_train_ids])
-            f_train_scrambled.create_dataset("labels", data=fc_train)
-            f_train_scrambled.create_dataset("density", data=density_train)
-            f_train_scrambled.create_dataset("file_name_train", data=np.array(
-                file_name_train, dtype=h5py.string_dtype(encoding='utf-8')))
-            f_train_scrambled.close()
-            f_test_scrambled = h5py.File('/datain/dataset/test_scrambled_percent_dti_' +
-                          edge_weight + '_diag1_' + str(iii) + '.h5py', 'w')
-            f_test_scrambled.create_dataset("inputs", data=SC_triu_random[sc_test_ids])
-            f_test_scrambled.create_dataset("labels", data=fc_test)
-            f_test_scrambled.create_dataset("density", data=density_test)
-            f_test_scrambled.create_dataset("file_name_test", data=np.array(
-                file_name_test, dtype=h5py.string_dtype(encoding='utf-8')))
-            f_test_scrambled.close()
+            if not no_scramble:
+                f_train_scrambled = h5py.File('/datain/dataset/train_scrambled_percent_dti_' +
+                                              edge_weight + '_diag1_' + str(iii) + '.h5py', 'w')
+                f_train_scrambled.create_dataset("inputs", data=SC_triu_random[sc_train_ids])
+                f_train_scrambled.create_dataset("labels", data=fc_train)
+                f_train_scrambled.create_dataset("density", data=density_train)
+                f_train_scrambled.create_dataset("file_name_train", data=np.array(
+                                                 file_name_train, dtype=h5py.string_dtype(encoding='utf-8')))
+                f_train_scrambled.close()
+                f_test_scrambled = h5py.File('/datain/dataset/test_scrambled_percent_dti_' +
+                                              edge_weight + '_diag1_' + str(iii) + '.h5py', 'w')
+                f_test_scrambled.create_dataset("inputs", data=SC_triu_random[sc_test_ids])
+                f_test_scrambled.create_dataset("labels", data=fc_test)
+                f_test_scrambled.create_dataset("density", data=density_test)
+                f_test_scrambled.create_dataset("file_name_test", data=np.array(
+                                                file_name_test, dtype=h5py.string_dtype(encoding='utf-8')))
+                f_test_scrambled.close()
