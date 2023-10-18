@@ -70,7 +70,7 @@ tomli==2.0.1
 typeguard==2.13.3
 typing_extensions==4.4.0
 tzdata==2023.3
-urllib3==1.26.17
+urllib3==1.26.18
 vtk==9.2.6
 wcwidth==0.2.6
 wrapt==1.15.0
