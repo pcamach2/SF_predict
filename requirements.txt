@@ -16,7 +16,7 @@ deprecat==2.1.1
 dill==0.3.6
 exceptiongroup==1.0.2
 fastprogress==1.0.3
-filelock==3.12.2
+filelock==4.2.1
 fonttools==4.43.0
 globus-sdk==3.14.0
 GPUtil==1.4.0
